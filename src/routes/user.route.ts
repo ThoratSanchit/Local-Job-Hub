@@ -1,30 +1,16 @@
-import {
-  FastifyInstance,
-  FastifyPluginOptions,
-  FastifyPluginAsync,
-} from "fastify";
-import UserController from "../controllers/user.controller";
-import { verifyToken } from "../middlewares/verifyToken";
+import { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
+import UserController from '../controllers/user.controller';
+import { verifyToken } from '../middlewares/verifyToken';
 
-const userRoutes: FastifyPluginAsync = async (
-  fastify: FastifyInstance,
-  options: FastifyPluginOptions,
-) => {
-  fastify.get<{ Params: { id: string } }>(
-    "/:id",
-    {
-      preHandler: verifyToken,
-      schema: {
-        params: {
-          type: "object",
-          properties: { id: { type: "string" } },
-          required: ["id"],
-        },
-      },
-    },
-    UserController.getUser,
-  );
-  fastify.post("/", UserController.createUser);
+const userRoutes: FastifyPluginAsync = async (fastify: FastifyInstance, _options: FastifyPluginOptions) => {
+  fastify.addHook('preHandler', verifyToken);
+
+  fastify.get('/me', (req, reply) => UserController.getMe(req, reply));
+  fastify.get('/me/jobs/posted', (req, reply) => UserController.getMyPostedJobs(req, reply));
+  fastify.get('/me/jobs/accepted', (req, reply) => UserController.getMyAcceptedJobs(req, reply));
+  fastify.get<{ Params: { id: string } }>('/:id', (req, reply) => UserController.getUser(req, reply));
+  fastify.put('/me', (req, reply) => UserController.updateProfile(req as any, reply));
+  fastify.patch('/me/availability', (req, reply) => UserController.toggleAvailability(req as any, reply));
 };
 
 export default userRoutes;

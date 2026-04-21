@@ -1,80 +1,284 @@
 # Local Job Hub
 
-A powerful fastify-based monolithic backend structured similarly to the `vms-config-api` ecosystem.
+An on-demand local manpower platform where any user can both post jobs and accept them as a worker — no fixed roles.
 
-## 🚀 Features
+## Tech Stack
 
-- **Fastify**: High-performance mapping and asynchronous request routing.
-- **Sequelize & MySQL**: Secure, scalable architecture equipped with retry/reconnect pooling natively synchronized to automatically define models securely.
-- **JWT Middleware**: Built-in `jsonwebtoken` logic for guarding routes effectively.
-- **TypeScript**: Statically typed throughout the layers, integrated alongside ESLint.
+- **Runtime:** Node.js + TypeScript
+- **Framework:** Fastify
+- **Database:** MySQL + Sequelize ORM
+- **Auth:** JWT + bcrypt
 
-## 📂 Architecture Stack
-```text
-📦 local-job-hub
- ┣ 📂 src
- ┃ ┣ 📂 config         # DB configurations & sequences (dotenv binding)
- ┃ ┣ 📂 controllers    # Business logic endpoints matching routes 
- ┃ ┣ 📂 language       # Abstractions for text/static responses (e.g. Messages)
- ┃ ┣ 📂 middlewares    # Pluggable security implementations (e.g., verifyToken)
- ┃ ┣ 📂 models         # Sequelize schemas mapped to the database definitions
- ┃ ┣ 📂 repositories   # DB interface layer for retrieving and persisting models
- ┃ ┣ 📂 routes         # Fastify route registrations mapped into plugins
- ┃ ┣ 📂 utility        # Common helpers and standardized handlers
- ┃ ┗ 📜 app.ts         # Fastify core initializer & sync point 
- ┣ 📜 package.json
- ┣ 📜 tsconfig.json
- ┣ 📜 .eslintrc.json
- ┣ 📜 .gitignore
- ┗ 📜 .env
-```
+## Getting Started
 
-## 🛠 Prerequisites
-You need **Node.js (v18+)** and an active **MySQL** connection running locally on `localhost:3306`.
+### Prerequisites
 
+- Node.js >= 18
+- MySQL running locally
 
-## 🖥 Commands
+### Setup
 
-Install missing dependencies strictly:
 ```bash
 npm install
 ```
 
-Start the application with continuous restart leveraging `nodemon`:
-```bash
-npm run dev
-```
+Configure your `.env`:
 
-Inspect your code for problems via `eslint`:
-```bash
-npm run lint
-```
-
-Compile TypeScript mappings purely before shifting to a production environment:
-```bash
-npm run build
-```
-
-## 🔐 Environment Configurations
-Create an `.env` matching your configuration inside the root directory. 
 ```env
-# Database
+PORT=3000
+NODE_ENV=development
+
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
-DB_PASSWORD=password
+DB_PASSWORD=your_password
 DB_NAME=local_job_hub_db
 
-# Security
-JWT_SECRET=super_secret_key
+JWT_SECRET=your_secret_key
 ```
 
-rm -rf .git
+### Run
 
-Use This for remove the current git repository
+```bash
+# Development
+npm run dev
 
+# Production build
+npm run build
+npm start
+```
+
+Tables are auto-created/altered on startup via `sequelize.sync({ alter: true })`.
 
 ---
-*Created by Sanchit*
 
+## API Reference
 
+All protected routes require:
+```
+Authorization: Bearer <token>
+```
+
+---
+
+### Auth
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/auth/signup` | ❌ | Register a new user |
+| POST | `/api/auth/login` | ❌ | Login and receive JWT |
+
+**Signup body:**
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "secret123",
+  "city": "Mumbai",
+  "area": "Andheri"
+}
+```
+
+**Login body:**
+```json
+{
+  "email": "john@example.com",
+  "password": "secret123"
+}
+```
+
+---
+
+### Users
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/users/me` | ✅ | Get own profile |
+| GET | `/api/users/me/jobs/posted` | ✅ | Jobs you have posted |
+| GET | `/api/users/me/jobs/accepted` | ✅ | Jobs you were accepted as a worker for |
+| GET | `/api/users/:id` | ✅ | Get any user's public profile |
+| PUT | `/api/users/me` | ✅ | Update name, city, area |
+| PATCH | `/api/users/me/availability` | ✅ | Toggle availability status |
+
+**Update profile body:**
+```json
+{ "name": "Jane", "city": "Delhi", "area": "Saket" }
+```
+
+**Toggle availability body:**
+```json
+{ "availability_status": "ONLINE" }
+```
+> Values: `ONLINE` | `OFFLINE`
+
+---
+
+### Jobs
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/jobs` | ✅ | Create a new job |
+| GET | `/api/jobs` | ✅ | List jobs in your city + area |
+| GET | `/api/jobs/:id` | ✅ | Get job details |
+| PATCH | `/api/jobs/:id/cancel` | ✅ | Cancel a job (creator only) |
+| PATCH | `/api/jobs/:id/complete` | ✅ | Mark job as completed (creator only) |
+
+**Create job body:**
+```json
+{
+  "title": "Need 2 movers",
+  "description": "Home shifting from 3rd floor, heavy furniture",
+  "category": "Labour",
+  "price": 800,
+  "workers_required": 2,
+  "urgent": false
+}
+```
+
+> City and area are automatically taken from the creator's profile.
+> `urgent: true` → expires in 1 hour. `urgent: false` → expires in 24 hours.
+
+**Cancel job body (optional):**
+```json
+{ "reason": "Plans changed" }
+```
+
+#### Job Status Lifecycle
+
+```
+OPEN → PARTIALLY_ACCEPTED → FULL → COMPLETED
+                                 → CANCELLED
+                                 → EXPIRED (auto, via scheduler)
+```
+
+---
+
+### Job Responses
+
+Workers respond to jobs; creators accept or reject them.
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/jobs/:jobId/respond` | ✅ | Respond to a job as a worker |
+| GET | `/api/jobs/:jobId/responses` | ✅ | View all responses (creator only) |
+| PATCH | `/api/jobs/:jobId/responses/:responseId/accept` | ✅ | Accept a worker |
+| PATCH | `/api/jobs/:jobId/responses/:responseId/reject` | ✅ | Reject a worker |
+
+> When accepted workers reach `workers_required`, job becomes `FULL` and all remaining pending responses are auto-rejected.
+
+---
+
+### Messages
+
+Only the job creator and accepted workers can message each other.
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/jobs/:jobId/messages` | ✅ | Send a message |
+| GET | `/api/jobs/:jobId/messages` | ✅ | Get all messages for a job |
+
+**Send message body:**
+```json
+{
+  "receiver_id": "uuid-of-recipient",
+  "content": "I'll be there by 10am"
+}
+```
+
+---
+
+### Reviews
+
+Only the job creator can review accepted workers after the job is completed.
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/jobs/:jobId/reviews` | ✅ | Submit a review for a worker |
+
+**Review body:**
+```json
+{
+  "worker_id": "uuid-of-worker",
+  "rating": 5,
+  "comment": "Very punctual and hardworking"
+}
+```
+
+> Submitting a review automatically updates the worker's `rating`, `total_jobs_completed`, and `completion_rate`.
+
+---
+
+### Notifications
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/notifications` | ✅ | Get all your notifications |
+| PATCH | `/api/notifications/:id/read` | ✅ | Mark a notification as read |
+
+**Notification triggers:**
+- Job created → nearby users in same city + area are notified
+- Worker responds → job creator is notified
+- Worker accepted → that worker is notified
+- Job completed → creator and all accepted workers are notified
+- Job cancelled → all accepted workers are notified
+
+---
+
+## Data Models
+
+### User
+| Field | Type | Notes |
+|-------|------|-------|
+| id | UUID | Primary key |
+| name | string | |
+| email | string | Unique |
+| password | string | bcrypt hashed |
+| city | string | Used for location filtering |
+| area | string | Used for location filtering |
+| rating | float | Auto-updated on review |
+| total_jobs_completed | int | Auto-updated on review |
+| completion_rate | float | |
+| is_verified | boolean | |
+| availability_status | enum | `ONLINE` / `OFFLINE` |
+
+### Job
+| Field | Type | Notes |
+|-------|------|-------|
+| id | UUID | |
+| title | string | |
+| description | text | |
+| category | string | |
+| price | float | |
+| city / area | string | Inherited from creator |
+| created_by | UUID | FK → User |
+| workers_required | int | |
+| status | enum | See lifecycle above |
+| urgent | boolean | |
+| expires_at | datetime | Auto-set on creation |
+| cancelled_by | UUID | nullable |
+| cancellation_reason | text | nullable |
+
+### JobResponse
+| Field | Type | Notes |
+|-------|------|-------|
+| id | UUID | |
+| job_id | UUID | FK → Job |
+| worker_id | UUID | FK → User |
+| status | enum | `PENDING` / `ACCEPTED` / `REJECTED` |
+
+---
+
+## Project Structure
+
+```
+src/
+├── app.ts                  # Entry point
+├── config/                 # DB config and Sequelize instance
+├── controllers/            # Route handlers
+├── middlewares/            # JWT verification
+├── models/                 # Sequelize models + associations
+├── repositories/           # DB query layer
+├── routes/                 # Fastify route definitions
+├── language/en/            # Response messages
+└── utility/                # JWT helper, notifications, expiry scheduler
+```

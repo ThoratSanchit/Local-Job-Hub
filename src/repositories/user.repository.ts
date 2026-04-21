@@ -1,16 +1,24 @@
 import User from '../models/user.model';
 
 class UserRepository {
-  async findById(userId: string) {
-    return await User.findByPk(userId);
+  findById(id: string) {
+    return User.findByPk(id, { attributes: { exclude: ['password'] } });
   }
 
-  async findAll() {
-    return await User.findAll();
+  findByEmail(email: string) {
+    return User.findOne({ where: { email } });
   }
 
-  async createUser(data: any) {
-    return await User.create(data);
+  findAll() {
+    return User.findAll({ attributes: { exclude: ['password'] } });
+  }
+
+  createUser(data: Partial<User>) {
+    return User.create(data as any);
+  }
+
+  updateUser(id: string, data: Partial<User>) {
+    return User.update(data as any, { where: { id } });
   }
 }
 
