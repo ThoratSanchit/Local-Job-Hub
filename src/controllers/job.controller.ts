@@ -9,10 +9,10 @@ import User from '../models/user.model';
 import { Op } from 'sequelize';
 
 class JobController {
-  async createJob(req: FastifyRequest<{ Body: { title: string; description: string; category: string; price: number; workers_required?: number; urgent?: boolean } }>, reply: FastifyReply) {
+  async createJob(req: FastifyRequest<{ Body: { title: string; description: string; category: string; price: number; workers_required?: number; urgent?: boolean; expires_at?: string } }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;
-      const { title, description, category, price, workers_required, urgent } = req.body;
+      const { title, description, category, price, workers_required, urgent, expires_at: userExpiresAt } = req.body;
 
       if (!title?.trim() || !description?.trim() || !category?.trim()) {
         return reply.code(400).send({ message: 'title, description, and category are required' });
@@ -24,11 +24,21 @@ class JobController {
         return reply.code(400).send({ message: 'workers_required must be a positive integer' });
       }
 
+      // Validate optional expires_at
+      let expires_at: Date | null = null;
+      if (userExpiresAt) {
+        const parsed = new Date(userExpiresAt);
+        if (isNaN(parsed.getTime())) {
+          return reply.code(400).send({ message: 'expires_at must be a valid ISO date string' });
+        }
+        if (parsed.getTime() <= Date.now()) {
+          return reply.code(400).send({ message: 'expires_at must be in the future' });
+        }
+        expires_at = parsed;
+      }
+
       const creator = await UserRepository.findById(userId);
       if (!creator) return reply.code(404).send({ message: Messages.USER_NOT_FOUND });
-
-      const now = new Date();
-      const expires_at = new Date(now.getTime() + (urgent ? 1 : 24) * 60 * 60 * 1000);
 
       const job = await JobRepository.create({
         title,

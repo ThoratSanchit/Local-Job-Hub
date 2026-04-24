@@ -18,7 +18,7 @@ class JobResponseController {
 
       const j = job as any;
       if (j.created_by === workerId) return reply.code(400).send({ message: Messages.CANNOT_RESPOND_OWN_JOB });
-      if (new Date(j.expires_at) < new Date()) return reply.code(400).send({ message: Messages.JOB_EXPIRED });
+      if (j.expires_at && new Date(j.expires_at) < new Date()) return reply.code(400).send({ message: Messages.JOB_EXPIRED });
 
       const openStatuses: JobStatus[] = [JobStatus.OPEN, JobStatus.PARTIALLY_ACCEPTED];
       if (!openStatuses.includes(j.status)) return reply.code(400).send({ message: Messages.JOB_NOT_OPEN });

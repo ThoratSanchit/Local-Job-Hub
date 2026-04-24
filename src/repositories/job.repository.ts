@@ -16,7 +16,11 @@ class JobRepository {
     return Job.findAll({
       where: { city, area, status: [JobStatus.OPEN, JobStatus.PARTIALLY_ACCEPTED] },
       include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'rating'] }],
-      order: [['createdAt', 'DESC']],
+      // Urgent jobs shown first, then newest first
+      order: [
+        ['urgent', 'DESC'],
+        ['createdAt', 'DESC'],
+      ],
     });
   }
 

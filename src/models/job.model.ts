@@ -22,7 +22,7 @@ class Job extends Model {
   public workers_required!: number;
   public status!: JobStatus;
   public urgent!: boolean;
-  public expires_at!: Date;
+  public expires_at!: Date | null;
   public cancelled_by!: string | null;
   public cancellation_reason!: string | null;
   public readonly createdAt!: Date;
@@ -52,7 +52,7 @@ Job.init(
       defaultValue: JobStatus.OPEN,
     },
     urgent: { type: DataTypes.BOOLEAN, defaultValue: false },
-    expires_at: { type: DataTypes.DATE, allowNull: false },
+    expires_at: { type: DataTypes.DATE, allowNull: true, defaultValue: null },
     cancelled_by: { type: DataTypes.UUID, allowNull: true, defaultValue: null },
     cancellation_reason: {
       type: DataTypes.TEXT,
