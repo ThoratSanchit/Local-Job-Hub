@@ -9,8 +9,9 @@ export enum AvailabilityStatus {
 class User extends Model {
   public id!: string;
   public name!: string;
-  public email!: string;
-  public password!: string;
+  // public email!: string;
+  // public password!: string;
+  public mobile_number!: string;
   public city!: string;
   public area!: string;
   public rating!: number;
@@ -29,8 +30,9 @@ User.init(
       primaryKey: true,
     },
     name: { type: DataTypes.STRING, allowNull: false },
-    email: { type: DataTypes.STRING, allowNull: false, unique: true },
-    password: { type: DataTypes.STRING, allowNull: false },
+    // email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    // password: { type: DataTypes.STRING, allowNull: false },
+    mobile_number: { type: DataTypes.STRING, allowNull: false, unique: true },
     city: { type: DataTypes.STRING, allowNull: false },
     area: { type: DataTypes.STRING, allowNull: false },
     rating: { type: DataTypes.FLOAT, defaultValue: 0 },

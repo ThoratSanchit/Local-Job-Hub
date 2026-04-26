@@ -1,0 +1,550 @@
+{
+  "info": {
+    "name": "Local-Job-Hub",
+    "description": "Postman collection for Local-Job-Hub API with OTP-based mobile authentication.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "OTP-based mobile authentication (no email/password). Hardcoded OTP: 82081",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"mobile_number\": \"9876543210\",\n  \"city\": \"Mumbai\",\n  \"area\": \"Andheri West\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signup"]
+            },
+            "description": "Create a new user account with mobile number."
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile_number\": \"9876543210\",\n  \"otp\": \"82081\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login with mobile number and hardcoded OTP (82081). Returns JWT token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "description": "All endpoints require Authorization: Bearer {{token}} header.",
+      "item": [
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "me"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"city\": \"Mumbai\",\n  \"area\": \"Andheri East\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "me"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Availability",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"availability_status\": \"ONLINE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/me/availability",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "me", "availability"]
+            },
+            "description": "Set availability_status to ONLINE or OFFLINE."
+          }
+        },
+        {
+          "name": "Get My Posted Jobs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/me/jobs/posted",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "me", "jobs", "posted"]
+            }
+          }
+        },
+        {
+          "name": "Get My Accepted Jobs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/me/jobs/accepted",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "me", "jobs", "accepted"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "description": "All endpoints require Authorization: Bearer {{token}} header.",
+      "item": [
+        {
+          "name": "Create Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Plumber needed for bathroom repair\",\n  \"description\": \"Need a plumber to fix a leaking pipe in the bathroom. Must bring own tools.\",\n  \"category\": \"Plumbing\",\n  \"price\": 500,\n  \"workers_required\": 1,\n  \"urgent\": true,\n  \"expires_at\": \"2026-05-01T10:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/jobs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs"]
+            },
+            "description": "expires_at is optional. If provided, must be a future ISO date."
+          }
+        },
+        {
+          "name": "Get Jobs (Nearby)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/jobs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs"]
+            },
+            "description": "Returns jobs in the same city+area as the logged-in user."
+          }
+        },
+        {
+          "name": "Get Job by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Job",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Found another worker\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "cancel"]
+            }
+          }
+        },
+        {
+          "name": "Complete Job",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/complete",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "complete"]
+            },
+            "description": "Only job creator can mark as completed. Job must be FULL or PARTIALLY_ACCEPTED."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Job Responses",
+      "description": "All endpoints require Authorization: Bearer {{token}} header.",
+      "item": [
+        {
+          "name": "Respond to Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/respond",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "respond"]
+            },
+            "description": "Worker responds to a job. Cannot respond to own job."
+          }
+        },
+        {
+          "name": "Get Job Responses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/responses",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "responses"]
+            },
+            "description": "Only job creator can view responses."
+          }
+        },
+        {
+          "name": "Accept Worker",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/responses/{{response_id}}/accept",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "responses", "{{response_id}}", "accept"]
+            },
+            "description": "Only job creator can accept a worker."
+          }
+        },
+        {
+          "name": "Reject Worker",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/responses/{{response_id}}/reject",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "responses", "{{response_id}}", "reject"]
+            },
+            "description": "Only job creator can reject a worker."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "description": "All endpoints require Authorization: Bearer {{token}} header. Messaging is allowed once a worker is accepted.",
+      "item": [
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiver_id\": \"{{receiver_id}}\",\n  \"content\": \"Hi, when can you start?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "messages"]
+            }
+          }
+        },
+        {
+          "name": "Get Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "messages"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "description": "All endpoints require Authorization: Bearer {{token}} header. Only job creator can submit reviews after job is completed.",
+      "item": [
+        {
+          "name": "Submit Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"worker_id\": \"{{worker_id}}\",\n  \"rating\": 5,\n  \"comment\": \"Excellent work, very professional!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/jobs/{{job_id}}/reviews",
+              "host": ["{{base_url}}"],
+              "path": ["api", "jobs", "{{job_id}}", "reviews"]
+            },
+            "description": "Rating must be an integer between 1 and 5."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "description": "All endpoints require Authorization: Bearer {{token}} header.",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notifications",
+              "host": ["{{base_url}}"],
+              "path": ["api", "notifications"]
+            }
+          }
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notifications/{{notification_id}}/read",
+              "host": ["{{base_url}}"],
+              "path": ["api", "notifications", "{{notification_id}}", "read"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "job_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "response_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "receiver_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "worker_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notification_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

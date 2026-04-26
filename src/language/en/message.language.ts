@@ -6,7 +6,9 @@ class Messages {
   static readonly SIGNUP_SUCCESS = 'Account created successfully';
   static readonly LOGIN_SUCCESS = 'Login successful';
   static readonly INVALID_CREDENTIALS = 'Invalid email or password';
+  static readonly INVALID_OTP_OR_MOBILE = 'Invalid mobile number or OTP';
   static readonly EMAIL_ALREADY_EXISTS = 'Email already registered';
+  static readonly MOBILE_ALREADY_EXISTS = 'Mobile number already registered';
 
   // User
   static readonly USER_FETCHED_SUCCESSFULLY = 'User fetched successfully';

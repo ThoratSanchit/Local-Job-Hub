@@ -1,31 +1,30 @@
 import { Sequelize } from 'sequelize';
-import { databaseConfig, initializeDatabase } from './db';
+import { databaseConfig } from './db';
 
-let sequelize: Sequelize;
+const sequelize = new Sequelize(
+    databaseConfig.config.database,
+    databaseConfig.config.user,
+    databaseConfig.config.password,
+    {
+        host: databaseConfig.config.host,
+        port: databaseConfig.config.port,
+        dialect: 'mysql',
+        logging: false,
+        pool: {
+            max: 300,
+            min: 0,
+            acquire: 150000,
+            idle: 40000,
+        },
+        retry: {
+            max: databaseConfig.config.reconnect.max || 3,
+            backoffBase: databaseConfig.config.reconnect.delay || 1000,
+        }
+    },
+);
 
 const initializeSequelize = async () => {
-    await initializeDatabase();
-    sequelize = new Sequelize(
-        databaseConfig.config.database,
-        databaseConfig.config.user,
-        databaseConfig.config.password,
-        {
-            host: databaseConfig.config.host,
-            port: databaseConfig.config.port,
-            dialect: 'mysql',
-            logging: false,
-            pool: {
-                max: 300,
-                min: 0,
-                acquire: 150000,
-                idle: 40000,
-            },
-            retry: {
-                max: databaseConfig.config.reconnect.max || 3,
-                backoffBase: databaseConfig.config.reconnect.delay || 1000,
-            }
-        },
-    );
+    // Any async initialization if needed
 };
 
 interface DatabaseConnectionStatus {
