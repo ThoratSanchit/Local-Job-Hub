@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { initializeSequelize, checkDatabaseConnection, sequelize } from './config/instance';
 import { setupAssociations } from './models/associations';
 import { startExpiryScheduler } from './utility/expiry.utility';
+import { registerRoutes } from './routes/index';
 
 dotenv.config();
 
@@ -26,19 +27,7 @@ const start = async () => {
     setupAssociations();
 
     // Register routes
-    const authRoutes = require('./routes/auth.route').default;
-    const userRoutes = require('./routes/user.route').default;
-    const jobRoutes = require('./routes/job.route').default;
-    const messageRoutes = require('./routes/message.route').default;
-    const reviewRoutes = require('./routes/review.route').default;
-    const notificationRoutes = require('./routes/notification.route').default;
-
-    fastify.register(authRoutes, { prefix: '/api/auth' });
-    fastify.register(userRoutes, { prefix: '/api/users' });
-    fastify.register(jobRoutes, { prefix: '/api/jobs' });
-    fastify.register(messageRoutes, { prefix: '/api/jobs' });
-    fastify.register(reviewRoutes, { prefix: '/api/jobs' });
-    fastify.register(notificationRoutes, { prefix: '/api/notifications' });
+    await registerRoutes(fastify);
 
     await sequelize.sync({ alter: true });
     console.log('Database tables synced successfully.');

@@ -1,11 +1,11 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import JobResponseRepository from '../repositories/jobResponse.repository';
 import JobRepository from '../repositories/job.repository';
-import { JobStatus } from '../models/job.model';
+import { JobStatus } from '../constants/job.constants';
 import { ResponseStatus } from '../models/jobResponse.model';
 import Messages from '../language/en/message.language';
 import { notify } from '../utility/notification.utility';
-import { NotificationType } from '../models/notification.model';
+import { NotificationType } from '../constants/notification.constants';
 
 class JobResponseController {
   async respond(req: FastifyRequest<{ Params: { jobId: string } }>, reply: FastifyReply) {

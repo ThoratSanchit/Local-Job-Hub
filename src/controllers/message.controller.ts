@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import MessageRepository from '../repositories/message.repository';
 import JobRepository from '../repositories/job.repository';
 import JobResponseRepository from '../repositories/jobResponse.repository';
-import { JobStatus } from '../models/job.model';
+import { JobStatus } from '../constants/job.constants';
 import Messages from '../language/en/message.language';
 
 // States where messaging is allowed

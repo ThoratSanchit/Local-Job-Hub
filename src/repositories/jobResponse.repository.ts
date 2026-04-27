@@ -46,7 +46,7 @@ class JobResponseRepository {
   // Count distinct completed jobs a worker was accepted for
   async countCompletedJobsForWorker(worker_id: string): Promise<number> {
     const { default: Job } = await import('../models/job.model');
-    const { JobStatus } = await import('../models/job.model');
+    const { JobStatus } = await import('../constants/job.constants');
     return JobResponse.count({
       where: { worker_id, status: ResponseStatus.ACCEPTED },
       include: [{ model: Job, as: 'job', where: { status: JobStatus.COMPLETED }, required: true }],

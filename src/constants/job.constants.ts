@@ -1,0 +1,14 @@
+export enum JobStatus {
+  OPEN = 'OPEN',
+  PARTIALLY_ACCEPTED = 'PARTIALLY_ACCEPTED',
+  FULL = 'FULL',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
+}
+
+export const MESSAGEABLE_STATUSES = [
+  JobStatus.PARTIALLY_ACCEPTED,
+  JobStatus.FULL,
+  JobStatus.COMPLETED,
+];

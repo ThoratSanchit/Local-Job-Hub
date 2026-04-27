@@ -1,5 +1,6 @@
 import { Op } from 'sequelize';
-import Job, { JobStatus } from '../models/job.model';
+import Job from '../models/job.model';
+import { JobStatus } from '../constants/job.constants';
 import JobResponse from '../models/jobResponse.model';
 
 const DAY_MS = 24 * 60 * 60 * 1000;

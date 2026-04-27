@@ -1,4 +1,5 @@
-import Job, { JobStatus } from '../models/job.model';
+import Job from '../models/job.model';
+import { JobStatus } from '../constants/job.constants';
 import User from '../models/user.model';
 
 class JobRepository {

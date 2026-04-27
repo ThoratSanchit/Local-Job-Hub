@@ -1,75 +1,20 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import JobRepository from '../repositories/job.repository';
 import UserRepository from '../repositories/user.repository';
-import { JobStatus } from '../models/job.model';
+import JobService from '../services/job.service';
 import Messages from '../language/en/message.language';
-import { notify, notifyMany } from '../utility/notification.utility';
-import { NotificationType } from '../models/notification.model';
-import User from '../models/user.model';
-import { Op } from 'sequelize';
+import { JobStatus } from '../constants/job.constants';
+import { NotificationType } from '../constants/notification.constants';
+import { notifyMany } from '../utility/notification.utility';
 
 class JobController {
-  async createJob(req: FastifyRequest<{ Body: { title: string; description: string; category: string; price: number; workers_required?: number; urgent?: boolean; expires_at?: string } }>, reply: FastifyReply) {
+  async createJob(req: FastifyRequest<{ Body: any }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;
-      const { title, description, category, price, workers_required, urgent, expires_at: userExpiresAt } = req.body;
-
-      if (!title?.trim() || !description?.trim() || !category?.trim()) {
-        return reply.code(400).send({ message: 'title, description, and category are required' });
-      }
-      if (typeof price !== 'number' || price <= 0) {
-        return reply.code(400).send({ message: 'price must be a positive number' });
-      }
-      if (workers_required !== undefined && (!Number.isInteger(workers_required) || workers_required < 1)) {
-        return reply.code(400).send({ message: 'workers_required must be a positive integer' });
-      }
-
-      // Validate optional expires_at
-      let expires_at: Date | null = null;
-      if (userExpiresAt) {
-        const parsed = new Date(userExpiresAt);
-        if (isNaN(parsed.getTime())) {
-          return reply.code(400).send({ message: 'expires_at must be a valid ISO date string' });
-        }
-        if (parsed.getTime() <= Date.now()) {
-          return reply.code(400).send({ message: 'expires_at must be in the future' });
-        }
-        expires_at = parsed;
-      }
-
-      const creator = await UserRepository.findById(userId);
-      if (!creator) return reply.code(404).send({ message: Messages.USER_NOT_FOUND });
-
-      const job = await JobRepository.create({
-        title,
-        description,
-        category,
-        price,
-        city: (creator as any).city,
-        area: (creator as any).area,
-        created_by: userId,
-        workers_required: workers_required || 1,
-        urgent: !!urgent,
-        expires_at,
-        status: JobStatus.OPEN,
-      });
-
-      // Notify nearby users (same city+area, excluding creator)
-      const nearbyUsers = await User.findAll({
-        where: {
-          city: (creator as any).city,
-          area: (creator as any).area,
-          id: { [Op.ne]: userId },
-        },
-        attributes: ['id'],
-      });
-      const ids = nearbyUsers.map((u) => u.id);
-      if (ids.length) {
-        await notifyMany(ids, NotificationType.JOB_CREATED, 'New Job Near You', `${title} — ₹${price}`, { job_id: (job as any).id });
-      }
-
+      const job = await JobService.createJob(userId, req.body);
       return reply.code(201).send({ message: Messages.JOB_CREATED, data: job });
-    } catch (err) {
+    } catch (err: any) {
+      if (err.message === 'USER_NOT_FOUND') return reply.code(404).send({ message: Messages.USER_NOT_FOUND });
       req.log.error(err);
       return reply.code(500).send({ message: Messages.INTERNAL_SERVER_ERROR });
     }

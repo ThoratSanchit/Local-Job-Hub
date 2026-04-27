@@ -1,14 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/instance";
-
-export enum JobStatus {
-  OPEN = "OPEN",
-  PARTIALLY_ACCEPTED = "PARTIALLY_ACCEPTED",
-  FULL = "FULL",
-  COMPLETED = "COMPLETED",
-  CANCELLED = "CANCELLED",
-  EXPIRED = "EXPIRED",
-}
+import { JobStatus } from "../constants/job.constants";
 
 class Job extends Model {
   public id!: string;

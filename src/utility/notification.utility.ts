@@ -1,4 +1,5 @@
-import Notification, { NotificationType } from '../models/notification.model';
+import Notification from '../models/notification.model';
+import { NotificationType } from '../constants/notification.constants';
 
 interface NotifyPayload {
   user_id: string;

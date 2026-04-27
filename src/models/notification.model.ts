@@ -1,13 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/instance';
-
-export enum NotificationType {
-  JOB_CREATED = 'JOB_CREATED',
-  WORKER_ACCEPTED = 'WORKER_ACCEPTED',
-  JOB_COMPLETED = 'JOB_COMPLETED',
-  JOB_CANCELLED = 'JOB_CANCELLED',
-  NEW_RESPONSE = 'NEW_RESPONSE',
-}
+import { NotificationType } from '../constants/notification.constants';
 
 class Notification extends Model {
   public id!: string;
