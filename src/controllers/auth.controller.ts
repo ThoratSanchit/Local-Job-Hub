@@ -1,43 +1,65 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-// import bcrypt from 'bcrypt';
-import UserRepository from '../repositories/user.repository';
-import { signToken } from '../utility/jwt.utility';
+import AuthService from '../services/auth.service';
 import Messages from '../language/en/message.language';
-
-const HARDCODED_OTP = '82081';
+import CustomError from '../utility/customError.utility';
+import {
+  ILoginRequest,
+  ISignupRequest,
+} from '../interfaces/auth.interface';
 
 class AuthController {
-  async signup(req: FastifyRequest<{ Body: { name: string; mobile_number: string; city: string; area: string } }>, reply: FastifyReply) {
+  async signup(req: FastifyRequest<{ Body: ISignupRequest }>, reply: FastifyReply) {
     try {
-      const { name, mobile_number, city, area } = req.body;
-      const existing = await UserRepository.findByMobile(mobile_number);
-      if (existing) return reply.code(409).send({ message: Messages.MOBILE_ALREADY_EXISTS });
+      const { token, user } = await AuthService.signup(req.body);
 
-      const user = await UserRepository.createUser({ name, mobile_number, city, area });
-
-      const token = signToken({ id: (user as any).id, mobile_number });
-      return reply.code(201).send({ message: Messages.SIGNUP_SUCCESS, token });
+      return reply.code(201).send({
+        statusCode: 201,
+        message: Messages.SIGNUP_SUCCESS,
+        token,
+        user,
+      });
     } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
       req.log.error(err);
-      return reply.code(500).send({ message: Messages.INTERNAL_SERVER_ERROR });
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
     }
   }
 
-  async login(req: FastifyRequest<{ Body: { mobile_number: string; otp: string } }>, reply: FastifyReply) {
+  async login(req: FastifyRequest<{ Body: ILoginRequest }>, reply: FastifyReply) {
     try {
-      const { mobile_number, otp } = req.body;
-      const user = await UserRepository.findByMobile(mobile_number);
-      if (!user) return reply.code(401).send({ message: Messages.INVALID_OTP_OR_MOBILE });
+      const { token, user } = await AuthService.login(req.body);
 
-      if (otp !== HARDCODED_OTP) return reply.code(401).send({ message: Messages.INVALID_OTP_OR_MOBILE });
-
-      const token = signToken({ id: user.id, mobile_number: user.mobile_number });
-      return reply.code(200).send({ message: Messages.LOGIN_SUCCESS, token });
+      return reply.code(200).send({
+        statusCode: 200, message:
+          Messages.LOGIN_SUCCESS,
+        token,
+        user,
+      });
     } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
       req.log.error(err);
-      return reply.code(500).send({ message: Messages.INTERNAL_SERVER_ERROR });
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
     }
   }
+
 }
 
 export default new AuthController();
