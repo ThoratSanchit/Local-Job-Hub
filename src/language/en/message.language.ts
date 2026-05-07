@@ -3,8 +3,8 @@ class Messages {
   static readonly INTERNAL_SERVER_ERROR = 'Internal Server Error';
 
   // Auth
-  static readonly SIGNUP_SUCCESS = 'Account created successfully';
-  static readonly LOGIN_SUCCESS = 'Login successful';
+  static readonly SIGNUP_SUCCESS = 'User Signup Successfully';
+  static readonly LOGIN_SUCCESS = 'User Login Successfully';
   static readonly INVALID_CREDENTIALS = 'Invalid email or password';
   static readonly INVALID_OTP_OR_MOBILE = 'Invalid mobile number or OTP';
   static readonly EMAIL_ALREADY_EXISTS = 'Email already registered';
