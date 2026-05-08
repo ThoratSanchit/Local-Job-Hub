@@ -72,12 +72,13 @@ Authorization: Bearer <token>
 ```json
 {
   "name": "John Doe",
-  "email": "john@example.com",
-  "password": "secret123",
+  "mobile_number": "9876543210",
+  "gender": "male",
   "city": "Mumbai",
   "area": "Andheri"
 }
 ```
+> Gender values: `male` | `female`
 
 **Login body:**
 ```json
@@ -231,8 +232,8 @@ Only the job creator can review accepted workers after the job is completed.
 |-------|------|-------|
 | id | UUID | Primary key |
 | name | string | |
-| email | string | Unique |
-| password | string | bcrypt hashed |
+| mobile_number | string | Unique |
+| gender | enum | `male` / `female` |
 | city | string | Used for location filtering |
 | area | string | Used for location filtering |
 | rating | float | Auto-updated on review |

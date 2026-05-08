@@ -2,10 +2,8 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import UserRepository from '../repositories/user.repository';
 import JobRepository from '../repositories/job.repository';
 import JobResponseRepository from '../repositories/jobResponse.repository';
-import { AvailabilityStatus } from '../models/user.model';
-import { ResponseStatus } from '../models/jobResponse.model';
 import Messages from '../language/en/message.language';
-import Job from '../models/job.model';
+import { AvailabilityStatus } from '../enums/availability.status.enum';
 
 class UserController {
   async getMe(req: FastifyRequest, reply: FastifyReply) {

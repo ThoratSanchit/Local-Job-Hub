@@ -7,12 +7,17 @@ import {
 import { signToken } from '../utility/jwt.utility';
 import CustomError from '../utility/customError.utility';
 import Messages from '../language/en/message.language';
+import { Gender } from '../enums/gender.enum';
 
 const HARDCODED_OTP = process.env.HARDCODED_OTP || '82081';
 
 class AuthService {
   async signup(data: ISignupRequest): Promise<IAuthResult> {
-    const { name, mobile_number, city, area } = data;
+    const { name, mobile_number, gender, city, area } = data;
+
+    if (!Object.values(Gender).includes(gender)) {
+      throw new CustomError(400, Messages.INVALID_GENDER);
+    }
 
     const existing = await UserRepository.findByMobile(mobile_number);
     if (existing) {
@@ -22,6 +27,7 @@ class AuthService {
     const user = await UserRepository.createUser({
       name,
       mobile_number,
+      gender,
       city,
       area,
     });
@@ -33,6 +39,7 @@ class AuthService {
         id: user.id,
         name: user.name,
         mobile_number: user.mobile_number,
+        gender: user.gender,
       },
     };
   }
@@ -52,6 +59,7 @@ class AuthService {
         id: user.id,
         name: user.name,
         mobile_number: user.mobile_number,
+        gender: user.gender,
       },
     };
   }
