@@ -21,6 +21,7 @@ class Messages {
 
   // Job
   static readonly JOB_CREATED = 'Job created successfully';
+  static readonly JOB_UPDATED = 'Job updated successfully';
   static readonly JOB_FETCHED = 'Job fetched successfully';
   static readonly JOBS_FETCHED = 'Jobs fetched successfully';
   static readonly JOB_NOT_FOUND = 'Job not found';
@@ -30,6 +31,9 @@ class Messages {
   static readonly JOB_ALREADY_FULL = 'Job is already full';
   static readonly JOB_NOT_OPEN = 'Job is not open for responses';
   static readonly JOB_UNAUTHORIZED = 'You are not the creator of this job';
+  static readonly JOB_CANCEL_INVALID_STATE = 'Job cannot be cancelled in its current state';
+  static readonly JOB_COMPLETE_INVALID_STATE = 'Job must be FULL or PARTIALLY_ACCEPTED to complete';
+  static readonly EXPIRES_AT_MUST_BE_FUTURE = 'expires_at must be in the future';
   static readonly CANNOT_RESPOND_OWN_JOB = 'You cannot respond to your own job';
 
   // Job Response

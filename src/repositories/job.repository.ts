@@ -1,6 +1,7 @@
 import Job from '../models/job.model';
 import { JobStatus } from '../constants/job.constants';
 import User from '../models/user.model';
+import { IUpdateJobData } from '../interfaces/job.interface';
 
 class JobRepository {
   create(data: Partial<Job>) {
@@ -17,7 +18,6 @@ class JobRepository {
     return Job.findAll({
       where: { city, area, status: [JobStatus.OPEN, JobStatus.PARTIALLY_ACCEPTED] },
       include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'rating'] }],
-      // Urgent jobs shown first, then newest first
       order: [
         ['urgent', 'DESC'],
         ['createdAt', 'DESC'],
@@ -27,6 +27,14 @@ class JobRepository {
 
   update(id: string, data: Partial<Job>) {
     return Job.update(data as any, { where: { id } });
+  }
+
+  updateJob(id: string, data: IUpdateJobData) {
+    const updateData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined)
+    );
+
+    return Job.update(updateData, { where: { id } });
   }
 
   findByCreator(created_by: string) {
