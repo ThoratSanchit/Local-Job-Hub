@@ -43,7 +43,6 @@ class JobResponseRepository {
     }).then((rows) => rows.map((r) => r.worker_id));
   }
 
-  // Count distinct completed jobs a worker was accepted for
   async countCompletedJobsForWorker(worker_id: string): Promise<number> {
     const { default: Job } = await import('../models/job.model');
     const { JobStatus } = await import('../constants/job.constants');
@@ -53,7 +52,6 @@ class JobResponseRepository {
     });
   }
 
-  // All accepted responses for a worker, with job details
   findByWorkerAccepted(worker_id: string) {
     return JobResponse.findAll({
       where: { worker_id, status: ResponseStatus.ACCEPTED },

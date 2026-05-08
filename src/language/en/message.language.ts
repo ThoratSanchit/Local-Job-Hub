@@ -18,6 +18,7 @@ class Messages {
   static readonly USER_CREATED_SUCCESSFULLY = 'User created successfully';
   static readonly USER_UPDATED_SUCCESSFULLY = 'User updated successfully';
   static readonly AVAILABILITY_UPDATED = 'Availability status updated';
+  static readonly INVALID_AVAILABILITY_STATUS = 'Invalid availability_status';
 
   // Job
   static readonly JOB_CREATED = 'Job created successfully';
