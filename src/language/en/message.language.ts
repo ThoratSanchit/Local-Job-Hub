@@ -7,6 +7,7 @@ class Messages {
   static readonly LOGIN_SUCCESS = 'User Login Successfully';
   static readonly INVALID_CREDENTIALS = 'Invalid email or password';
   static readonly INVALID_OTP_OR_MOBILE = 'Invalid mobile number or OTP';
+  static readonly INVALID_GENDER = 'Gender must be male or female';
   static readonly EMAIL_ALREADY_EXISTS = 'Email already registered';
   static readonly MOBILE_ALREADY_EXISTS = 'Mobile number already registered';
 

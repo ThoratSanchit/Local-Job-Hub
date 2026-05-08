@@ -1,6 +1,9 @@
+import { Gender } from "../enums/gender.enum";
+
 export interface ISignupRequest {
   name: string;
   mobile_number: string;
+  gender: Gender;
   city: string;
   area: string;
 }
@@ -16,5 +19,6 @@ export interface IAuthResult {
     id: string;
     name: string;
     mobile_number: string;
+    gender: Gender;
   };
 }
