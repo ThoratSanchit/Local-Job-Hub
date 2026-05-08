@@ -11,8 +11,18 @@ const fastify = Fastify({ logger: true });
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 fastify.setErrorHandler((error, request, reply) => {
+  if (error.validation) {
+    return reply.status(400).send({
+      statusCode: 400,
+      message: error.message,
+    });
+  }
+
   fastify.log.error(error);
-  reply.status(500).send({ error: 'Something broke!' });
+  reply.status(500).send({
+    statusCode: 500,
+    message: 'Something broke!',
+  });
 });
 
 const start = async () => {
