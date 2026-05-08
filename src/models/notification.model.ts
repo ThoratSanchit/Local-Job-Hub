@@ -20,17 +20,36 @@ Notification.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    user_id: { type: DataTypes.UUID, allowNull: false },
+    user_id: {
+      type: DataTypes.UUID,
+      allowNull: false
+    },
     type: {
       type: DataTypes.ENUM(...Object.values(NotificationType)),
       allowNull: false,
     },
-    title: { type: DataTypes.STRING, allowNull: false },
-    body: { type: DataTypes.TEXT, allowNull: false },
-    is_read: { type: DataTypes.BOOLEAN, defaultValue: false },
-    meta: { type: DataTypes.JSON, defaultValue: {} },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    body: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    is_read: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    meta: {
+      type: DataTypes.JSON,
+      defaultValue: {}
+    },
   },
-  { sequelize, tableName: 'notifications', timestamps: true }
+  {
+    sequelize,
+    tableName: 'notifications',
+    timestamps: true
+  }
 );
 
 export default Notification;

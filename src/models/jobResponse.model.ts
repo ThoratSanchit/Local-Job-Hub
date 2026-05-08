@@ -1,12 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/instance';
-
-export enum ResponseStatus {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-}
-
+import { ResponseStatus } from '../enums/response.status.enum';
 class JobResponse extends Model {
   public id!: string;
   public job_id!: string;
@@ -22,8 +16,14 @@ JobResponse.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    job_id: { type: DataTypes.UUID, allowNull: false },
-    worker_id: { type: DataTypes.UUID, allowNull: false },
+    job_id: {
+      type: DataTypes.UUID,
+      allowNull: false
+    },
+    worker_id: {
+      type: DataTypes.UUID,
+      allowNull: false
+    },
     status: {
       type: DataTypes.ENUM(...Object.values(ResponseStatus)),
       defaultValue: ResponseStatus.PENDING,
