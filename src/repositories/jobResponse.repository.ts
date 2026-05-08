@@ -1,4 +1,5 @@
-import JobResponse, { ResponseStatus } from '../models/jobResponse.model';
+import { ResponseStatus } from '../enums/response.status.enum';
+import JobResponse from '../models/jobResponse.model';
 import User from '../models/user.model';
 
 class JobResponseRepository {
