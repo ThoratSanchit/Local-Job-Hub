@@ -1,4 +1,5 @@
 import User from '../models/user.model';
+import { IUpdateUser } from '../interfaces/user.interface';
 
 class UserRepository {
   findById(id: string) {
@@ -23,6 +24,14 @@ class UserRepository {
 
   updateUser(id: string, data: Partial<User>) {
     return User.update(data as any, { where: { id } });
+  }
+
+  updateProfile(id: string, data: IUpdateUser) {
+    const updateData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined)
+    );
+
+    return User.update(updateData, { where: { id } });
   }
 }
 
