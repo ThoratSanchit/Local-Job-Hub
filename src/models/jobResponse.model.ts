@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/instance';
 import { ResponseStatus } from '../enums/response.status.enum';
+export { ResponseStatus };
 class JobResponse extends Model {
   public id!: string;
   public job_id!: string;

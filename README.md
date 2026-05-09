@@ -283,3 +283,37 @@ src/
 ├── language/en/            # Response messages
 └── utility/                # JWT helper, notifications, expiry scheduler
 ```
+
+## 🚀 Deployment (AWS Lambda)
+
+This project is configured to run on **AWS Lambda** using the **Serverless Framework** and **esbuild** for high-performance bundling.
+
+### Prerequisites
+- Node.js 20+
+- Serverless Framework (`npm install -g serverless`)
+- AWS CLI configured with appropriate permissions
+
+### Deploy to AWS
+To deploy the API to the Mumbai region (`ap-south-1`):
+```bash
+npx serverless deploy --force
+```
+
+### Local Development
+To run the Lambda environment locally:
+```bash
+npx serverless offline
+```
+
+## 🏥 API Health Status
+You can verify the API and Database connectivity using the health endpoint:
+
+**Endpoint**: `https://3mi90yl0n8.execute-api.ap-south-1.amazonaws.com/dev/health`
+
+**CURL Command**:
+```bash
+curl --location 'https://3mi90yl0n8.execute-api.ap-south-1.amazonaws.com/dev/health'
+```
+
+---
+*Maintained by [ThoratSanchit](https://github.com/ThoratSanchit)*

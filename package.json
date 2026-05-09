@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/aws-lambda": "^6.4.0",
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",
     "dotenv": "^16.4.5",
@@ -22,12 +23,18 @@
     "sequelize": "^6.37.3"
   },
   "devDependencies": {
+    "@types/aws-lambda-fastify": "^1.4.5",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^20.12.11",
+    "@types/node": "^20.19.40",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
+    "esbuild": "^0.28.0",
     "eslint": "^8.57.0",
     "nodemon": "^3.1.0",
+    "serverless": "^3.38.0",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-esbuild": "^1.57.1",
+    "serverless-offline": "^8.8.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }
