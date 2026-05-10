@@ -308,7 +308,7 @@ npx serverless offline
 ## 🏥 API Health Status
 You can verify the API and Database connectivity using the health endpoint:
 
-**Endpoint**: `https://3mi90yl0n8.execute-api.ap-south-1.amazonaws.com/dev/health`
+**Endpoint**: `https://3mi90yl0n8.execute-api.ap-south-1.amazonaws.com/dev/`
 
 **CURL Command**:
 ```bash
