@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import multipart from '@fastify/multipart';
 import dotenv from 'dotenv';
 import { initializeSequelize, checkDatabaseConnection, sequelize } from './config/instance';
 import { setupAssociations } from './models/associations';
@@ -8,6 +9,8 @@ import { registerRoutes } from './routes/index';
 dotenv.config();
 
 const fastify = Fastify({ logger: true });
+
+fastify.register(multipart);
 
 fastify.setErrorHandler((error, request, reply) => {
   if (error.validation) {
@@ -27,7 +30,7 @@ fastify.setErrorHandler((error, request, reply) => {
 fastify.get('/health', async (request, reply) => {
   const dbStatus = await checkDatabaseConnection();
   const isHealthy = dbStatus.connected;
-  
+
   return reply.status(isHealthy ? 200 : 503).send({
     status: isHealthy ? 'healthy' : 'unhealthy',
     uptime: process.uptime(),
