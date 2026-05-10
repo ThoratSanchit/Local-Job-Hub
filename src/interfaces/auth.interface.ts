@@ -9,23 +9,15 @@ export interface ISignupRequest {
   profile_photo?: string;
 }
 
-export interface ISignupOtpRequest {
+export interface IOtpRequest {
   mobile_number: string;
 }
 
-export interface IVerifySignupOtpRequest {
+export interface IVerifyOtpRequest {
   mobile_number: string;
   otp: string;
 }
 
-export interface ILoginOtpRequest {
-  mobile_number: string;
-}
-
-export interface ILoginRequest {
-  mobile_number: string;
-  otp: string;
-}
 export interface IAuthResult {
   token: string;
   user: {
@@ -35,4 +27,11 @@ export interface IAuthResult {
     gender: Gender;
     profile_photo: string | null;
   };
+}
+
+export interface IVerifyOtpResult {
+  is_registered: boolean;
+  signup_required: boolean;
+  token?: string;
+  user?: IAuthResult['user'];
 }

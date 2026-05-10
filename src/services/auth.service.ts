@@ -1,11 +1,10 @@
 import UserRepository from '../repositories/user.repository';
 import {
   IAuthResult,
-  ILoginOtpRequest,
-  ILoginRequest,
-  ISignupOtpRequest,
+  IOtpRequest,
   ISignupRequest,
-  IVerifySignupOtpRequest
+  IVerifyOtpRequest,
+  IVerifyOtpResult
 } from '../interfaces/auth.interface';
 import { signToken } from '../utility/jwt.utility';
 import CustomError from '../utility/customError.utility';
@@ -14,9 +13,8 @@ import { Gender } from '../enums/gender.enum';
 
 const HARDCODED_OTP = process.env.HARDCODED_OTP || '82081';
 
-const pendingSignupMobiles = new Set<string>();
+const pendingOtpMobiles = new Set<string>();
 const verifiedSignupMobiles = new Set<string>();
-const pendingLoginMobiles = new Set<string>();
 
 const normalizeMobileNumber = (mobile_number: string) => mobile_number.trim();
 
@@ -27,36 +25,58 @@ const validateMobileNumber = (mobile_number: string) => {
 };
 
 class AuthService {
-  async sendSignupOtp(data: ISignupOtpRequest): Promise<{ otp: string }> {
+  private buildAuthResult(user: any): IAuthResult {
+    const token = signToken({ id: user.id, mobile_number: user.mobile_number });
+
+    return {
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        mobile_number: user.mobile_number,
+        gender: user.gender,
+        profile_photo: user.profile_photo,
+      },
+    };
+  }
+
+  async sendOtp(data: IOtpRequest): Promise<{ otp: string }> {
     const mobile_number = normalizeMobileNumber(data.mobile_number);
     validateMobileNumber(mobile_number);
 
-    const existing = await UserRepository.findByMobile(mobile_number);
-    if (existing) {
-      throw new CustomError(409, Messages.MOBILE_ALREADY_EXISTS);
-    }
-
-    pendingSignupMobiles.add(mobile_number);
+    pendingOtpMobiles.add(mobile_number);
 
     return { otp: HARDCODED_OTP };
   }
 
-  async verifySignupOtp(data: IVerifySignupOtpRequest): Promise<void> {
+  async verifyOtp(data: IVerifyOtpRequest): Promise<IVerifyOtpResult> {
     const mobile_number = normalizeMobileNumber(data.mobile_number);
     const { otp } = data;
     validateMobileNumber(mobile_number);
 
-    const existing = await UserRepository.findByMobile(mobile_number);
-    if (existing) {
-      throw new CustomError(409, Messages.MOBILE_ALREADY_EXISTS);
-    }
-
-    if (!pendingSignupMobiles.has(mobile_number) || otp !== HARDCODED_OTP) {
+    if (!pendingOtpMobiles.has(mobile_number) || otp !== HARDCODED_OTP) {
       throw new CustomError(401, Messages.INVALID_OTP);
     }
 
-    pendingSignupMobiles.delete(mobile_number);
+    pendingOtpMobiles.delete(mobile_number);
+
+    const user = await UserRepository.findByMobile(mobile_number);
+    if (user) {
+      const authResult = this.buildAuthResult(user);
+
+      return {
+        is_registered: true,
+        signup_required: false,
+        ...authResult,
+      };
+    }
+
     verifiedSignupMobiles.add(mobile_number);
+
+    return {
+      is_registered: false,
+      signup_required: true,
+    };
   }
 
   async signup(data: ISignupRequest): Promise<IAuthResult> {
@@ -89,56 +109,7 @@ class AuthService {
 
     verifiedSignupMobiles.delete(mobile_number);
 
-    const token = signToken({ id: user.id, mobile_number });
-    return {
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        mobile_number: user.mobile_number,
-        gender: user.gender,
-        profile_photo: user.profile_photo,
-      },
-    };
-  }
-
-  async sendLoginOtp(data: ILoginOtpRequest): Promise<{ otp: string }> {
-    const mobile_number = normalizeMobileNumber(data.mobile_number);
-    validateMobileNumber(mobile_number);
-
-    const user = await UserRepository.findByMobile(mobile_number);
-    if (!user) {
-      throw new CustomError(404, Messages.MOBILE_NOT_REGISTERED);
-    }
-
-    pendingLoginMobiles.add(mobile_number);
-
-    return { otp: HARDCODED_OTP };
-  }
-
-  async login(data: ILoginRequest): Promise<IAuthResult> {
-    const mobile_number = normalizeMobileNumber(data.mobile_number);
-    const { otp } = data;
-    validateMobileNumber(mobile_number);
-
-    const user = await UserRepository.findByMobile(mobile_number);
-    if (!user || !pendingLoginMobiles.has(mobile_number) || otp !== HARDCODED_OTP) {
-      throw new CustomError(401, Messages.INVALID_OTP);
-    }
-
-    pendingLoginMobiles.delete(mobile_number);
-
-    const token = signToken({ id: user.id, mobile_number: user.mobile_number });
-    return {
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        mobile_number: user.mobile_number,
-        gender: user.gender,
-        profile_photo: user.profile_photo,
-      },
-    };
+    return this.buildAuthResult(user);
   }
 }
 
