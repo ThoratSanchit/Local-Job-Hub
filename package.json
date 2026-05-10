@@ -14,11 +14,14 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/aws-lambda": "^6.4.0",
+    "@fastify/multipart": "^7.7.3",
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.10.0",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.1.1",
     "mysql2": "^3.9.7",
     "sequelize": "^6.37.3"
   },

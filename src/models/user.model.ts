@@ -10,6 +10,7 @@ class User extends Model {
   public gender!: Gender;
   public city!: string;
   public area!: string;
+  public profile_photo!: string | null;
   public rating!: number;
   public total_jobs_completed!: number;
   public completion_rate!: number;
@@ -45,6 +46,10 @@ User.init(
     area: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    profile_photo: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     rating: {
       type: DataTypes.FLOAT,

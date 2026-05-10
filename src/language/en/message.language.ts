@@ -4,9 +4,18 @@ class Messages {
 
   // Auth
   static readonly SIGNUP_SUCCESS = 'User Signup Successfully';
+  static readonly OTP_SENT = 'OTP sent successfully';
+  static readonly OTP_VERIFIED = 'OTP verified successfully';
+  static readonly PROFILE_PHOTO_UPLOADED = 'Profile photo uploaded successfully';
+  static readonly PROFILE_PHOTO_REQUIRED = 'Profile photo is required';
+  static readonly PROFILE_PHOTO_TOO_LARGE = 'Profile photo must be 5 MB or less';
+  static readonly SIGNUP_OTP_REQUIRED = 'Please verify mobile number OTP before signup';
   static readonly LOGIN_SUCCESS = 'User Login Successfully';
+  static readonly LOGIN_OTP_SENT = 'Login OTP sent successfully';
+  static readonly MOBILE_NOT_REGISTERED = 'Mobile number is not registered. Please sign up first';
   static readonly INVALID_CREDENTIALS = 'Invalid email or password';
-  static readonly INVALID_OTP_OR_MOBILE = 'Invalid mobile number or OTP';
+  static readonly INVALID_OTP = 'Invalid OTP. Please enter a valid OTP';
+  static readonly INVALID_MOBILE_NUMBER = 'Mobile number must be a valid 10 digit number';
   static readonly INVALID_GENDER = 'Gender must be male or female';
   static readonly EMAIL_ALREADY_EXISTS = 'Email already registered';
   static readonly MOBILE_ALREADY_EXISTS = 'Mobile number already registered';
