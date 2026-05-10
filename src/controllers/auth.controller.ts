@@ -4,16 +4,14 @@ import Messages from '../language/en/message.language';
 import CustomError from '../utility/customError.utility';
 import { isFileSizeLimitError, uploadProfilePhoto } from '../utility/upload.image';
 import {
-  ILoginOtpRequest,
-  ILoginRequest,
-  ISignupOtpRequest,
+  IOtpRequest,
   ISignupRequest,
-  IVerifySignupOtpRequest,
+  IVerifyOtpRequest,
 } from '../interfaces/auth.interface';
 class AuthController {
-  async sendSignupOtp(req: FastifyRequest<{ Body: ISignupOtpRequest }>, reply: FastifyReply) {
+  async sendOtp(req: FastifyRequest<{ Body: IOtpRequest }>, reply: FastifyReply) {
     try {
-      const { otp } = await AuthService.sendSignupOtp(req.body);
+      const { otp } = await AuthService.sendOtp(req.body);
 
       return reply.code(200).send({
         statusCode: 200,
@@ -36,13 +34,14 @@ class AuthController {
     }
   }
 
-  async verifySignupOtp(req: FastifyRequest<{ Body: IVerifySignupOtpRequest }>, reply: FastifyReply) {
+  async verifyOtp(req: FastifyRequest<{ Body: IVerifyOtpRequest }>, reply: FastifyReply) {
     try {
-      await AuthService.verifySignupOtp(req.body);
+      const result = await AuthService.verifyOtp(req.body);
 
       return reply.code(200).send({
         statusCode: 200,
-        message: Messages.OTP_VERIFIED,
+        message: result.is_registered ? Messages.LOGIN_SUCCESS : Messages.OTP_VERIFIED,
+        ...result,
       });
     } catch (err) {
       if (err instanceof CustomError) {
@@ -67,57 +66,6 @@ class AuthController {
       return reply.code(201).send({
         statusCode: 201,
         message: Messages.SIGNUP_SUCCESS,
-        token,
-        user,
-      });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        return reply.code(err.statusCode).send({
-          statusCode: err.statusCode,
-          message: err.message
-        });
-      }
-
-      req.log.error(err);
-      return reply.code(500).send({
-        statusCode: 500,
-        message: Messages.INTERNAL_SERVER_ERROR
-      });
-    }
-  }
-
-  async sendLoginOtp(req: FastifyRequest<{ Body: ILoginOtpRequest }>, reply: FastifyReply) {
-    try {
-      const { otp } = await AuthService.sendLoginOtp(req.body);
-
-      return reply.code(200).send({
-        statusCode: 200,
-        message: Messages.LOGIN_OTP_SENT,
-        otp,
-      });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        return reply.code(err.statusCode).send({
-          statusCode: err.statusCode,
-          message: err.message
-        });
-      }
-
-      req.log.error(err);
-      return reply.code(500).send({
-        statusCode: 500,
-        message: Messages.INTERNAL_SERVER_ERROR
-      });
-    }
-  }
-
-  async login(req: FastifyRequest<{ Body: ILoginRequest }>, reply: FastifyReply) {
-    try {
-      const { token, user } = await AuthService.login(req.body);
-
-      return reply.code(200).send({
-        statusCode: 200, message:
-          Messages.LOGIN_SUCCESS,
         token,
         user,
       });
