@@ -3,11 +3,11 @@ import * as mysql2 from 'mysql2';
 import { databaseConfig } from './db';
 
 const sequelize = new Sequelize(
-    databaseConfig.config.database,
-    databaseConfig.config.user,
-    databaseConfig.config.password,
+    databaseConfig.config.database!,
+    databaseConfig.config.user!,
+    databaseConfig.config.password!,
     {
-        host: databaseConfig.config.host,
+        host: databaseConfig.config.host!,
         port: databaseConfig.config.port,
         dialect: 'mysql',
         dialectModule: mysql2,
@@ -43,14 +43,14 @@ const checkDatabaseConnection = async (): Promise<DatabaseConnectionStatus> => {
         return {
             connected: true,
             message: 'Database connected successfully',
-            database: databaseConfig.config.database
+            database: databaseConfig.config.database!,
         };
     } catch (error) {
         console.error('Unable to connect to the database:', error);
         return {
             connected: false,
             message: 'Database connection failed',
-            database: databaseConfig.config.database,
+            database: databaseConfig.config.database!,
             error: error instanceof Error ? error.message : String(error)
         };
     }
