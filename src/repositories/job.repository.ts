@@ -1,11 +1,11 @@
 import Job from '../models/job.model';
 import { JobStatus } from '../constants/job.constants';
 import User from '../models/user.model';
-import { IUpdateJobData } from '../interfaces/job.interface';
+import { ICreateJobData, IJobUpdateData, IUpdateJobData } from '../interfaces/job.interface';
 
 class JobRepository {
-  create(data: Partial<Job>) {
-    return Job.create(data as any);
+  create(data: ICreateJobData) {
+    return Job.create(data);
   }
 
   findById(id: string) {
@@ -25,8 +25,8 @@ class JobRepository {
     });
   }
 
-  update(id: string, data: Partial<Job>) {
-    return Job.update(data as any, { where: { id } });
+  update(id: string, data: IJobUpdateData) {
+    return Job.update(data, { where: { id } });
   }
 
   updateJob(id: string, data: IUpdateJobData) {

@@ -3,7 +3,7 @@ import Messages from '../language/en/message.language';
 import { AvailabilityStatus } from '../enums/availability.status.enum';
 import CustomError from '../utility/customError.utility';
 import UserService from '../services/user.service';
-import { IUpdateUser } from '../interfaces/user.interface';
+import { IUpdateUser, IUserParams } from '../interfaces/user.interface';
 
 class UserController {
   async getMe(req: FastifyRequest, reply: FastifyReply) {
@@ -32,7 +32,7 @@ class UserController {
     }
   }
 
-  async getUser(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+  async getUser(req: FastifyRequest<{ Params: IUserParams }>, reply: FastifyReply) {
     try {
       const user = await UserService.getUser(req.params.id);
 

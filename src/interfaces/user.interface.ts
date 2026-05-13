@@ -38,3 +38,7 @@ export interface IUpdateUser {
   is_onboarded?: boolean;
   availability_status?: AvailabilityStatus;
 }
+
+export interface IUserParams {
+  id: string;
+}

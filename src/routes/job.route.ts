@@ -1,10 +1,10 @@
-import { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
+import { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import JobController from '../controllers/job.controller';
 import JobResponseController from '../controllers/jobResponse.controller';
 import { verifyToken } from '../middlewares/verifyToken';
 import { createJobSchema, updateJobSchema } from '../schemas/job.schema';
 
-const jobRoutes: FastifyPluginAsync = async (fastify: FastifyInstance, _options: FastifyPluginOptions) => {
+const jobRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   fastify.addHook('preHandler', verifyToken);
 
   fastify.post('/', { schema: createJobSchema }, JobController.createJob);
