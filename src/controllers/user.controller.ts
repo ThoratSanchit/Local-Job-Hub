@@ -117,57 +117,6 @@ class UserController {
     }
   }
 
-  async getMyPostedJobs(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const userId = (req as any).user.id;
-      const jobs = await UserService.getMyPostedJobs(userId);
-
-      return reply.code(200).send({
-        statusCode: 200,
-        message: Messages.JOBS_FETCHED,
-        data: jobs,
-      });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        return reply.code(err.statusCode).send({
-          statusCode: err.statusCode,
-          message: err.message
-        });
-      }
-
-      req.log.error(err);
-      return reply.code(500).send({
-        statusCode: 500,
-        message: Messages.INTERNAL_SERVER_ERROR
-      });
-    }
-  }
-
-  async getMyAcceptedJobs(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const userId = (req as any).user.id;
-      const responses = await UserService.getMyAcceptedJobs(userId);
-
-      return reply.code(200).send({
-        statusCode: 200,
-        message: Messages.JOBS_FETCHED,
-        data: responses,
-      });
-    } catch (err) {
-      if (err instanceof CustomError) {
-        return reply.code(err.statusCode).send({
-          statusCode: err.statusCode,
-          message: err.message
-        });
-      }
-
-      req.log.error(err);
-      return reply.code(500).send({
-        statusCode: 500,
-        message: Messages.INTERNAL_SERVER_ERROR
-      });
-    }
-  }
 }
 
 export default new UserController();

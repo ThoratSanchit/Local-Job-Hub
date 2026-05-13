@@ -162,6 +162,84 @@ class JobController {
       });
     }
   }
+
+  async getMyPostedJobs(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const userId = (req as any).user.id;
+      const jobs = await JobService.getMyPostedJobs(userId);
+
+      return reply.code(200).send({
+        statusCode: 200,
+        message: Messages.JOBS_FETCHED,
+        data: jobs,
+      });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
+      req.log.error(err);
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
+    }
+  }
+
+  async getMyAcceptedJobs(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const userId = (req as any).user.id;
+      const responses = await JobService.getMyAcceptedJobs(userId);
+
+      return reply.code(200).send({
+        statusCode: 200,
+        message: Messages.JOBS_FETCHED,
+        data: responses,
+      });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
+      req.log.error(err);
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
+    }
+  }
+
+  async getMyApplications(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const userId = (req as any).user.id;
+      const applications = await JobService.getMyApplications(userId);
+
+      return reply.code(200).send({
+        statusCode: 200,
+        message: Messages.JOBS_FETCHED,
+        data: applications,
+      });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
+      req.log.error(err);
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
+    }
+  }
 }
 
 export default new JobController();

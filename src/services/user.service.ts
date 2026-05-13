@@ -1,5 +1,3 @@
-import JobRepository from '../repositories/job.repository';
-import JobResponseRepository from '../repositories/jobResponse.repository';
 import UserRepository from '../repositories/user.repository';
 import { AvailabilityStatus } from '../enums/availability.status.enum';
 import { IUpdateUser } from '../interfaces/user.interface';
@@ -45,13 +43,6 @@ class UserService {
     await UserRepository.updateProfile(userId, { availability_status });
   }
 
-  getMyPostedJobs(userId: string) {
-    return JobRepository.findByCreator(userId);
-  }
-
-  getMyAcceptedJobs(userId: string) {
-    return JobResponseRepository.findByWorkerAccepted(userId);
-  }
 }
 
 export default new UserService();

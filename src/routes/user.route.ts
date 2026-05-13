@@ -5,9 +5,11 @@ import { verifyToken } from '../middlewares/verifyToken';
 const userRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   fastify.addHook('preHandler', verifyToken);
 
+  fastify.get('/me', (req, reply) => UserController.getMe(req, reply));
+  fastify.get<{ Params: { id: string } }>('/:id', (req, reply) => UserController.getUser(req, reply));
+  fastify.put('/me', (req, reply) => UserController.updateProfile(req as any, reply));
+  fastify.patch('/me/availability', (req, reply) => UserController.toggleAvailability(req as any, reply));
   fastify.get('/me', UserController.getMe);
-  fastify.get('/me/jobs/posted', UserController.getMyPostedJobs);
-  fastify.get('/me/jobs/accepted', UserController.getMyAcceptedJobs);
   fastify.get('/:id', UserController.getUser);
   fastify.put('/me', UserController.updateProfile);
   fastify.patch('/me/availability', UserController.toggleAvailability);
