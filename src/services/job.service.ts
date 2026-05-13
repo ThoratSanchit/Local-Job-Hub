@@ -7,7 +7,7 @@ import { NotificationType } from '../constants/notification.constants';
 import { notifyMany } from '../utility/notification.utility';
 import CustomError from '../utility/customError.utility';
 import Messages from '../language/en/message.language';
-import { ICreateJobRequest, IUpdateJobData, IUpdateJobRequest } from '../interfaces/job.interface';
+import { ICreateJobRequest, IJobUpdateData, IUpdateJobData, IUpdateJobRequest } from '../interfaces/job.interface';
 import { Op } from 'sequelize';
 
 class JobService {
@@ -36,8 +36,8 @@ class JobService {
       description,
       category,
       price,
-      city: (creator as any).city,
-      area: (creator as any).area,
+      city: creator.city,
+      area: creator.area,
       created_by: userId,
       workers_required: workers_required || 1,
       urgent: !!urgent,
@@ -47,8 +47,8 @@ class JobService {
 
     const nearbyUsers = await User.findAll({
       where: {
-        city: (creator as any).city,
-        area: (creator as any).area,
+        city: creator.city,
+        area: creator.area,
         id: { [Op.ne]: userId },
       },
       attributes: ['id'],
@@ -61,7 +61,7 @@ class JobService {
         NotificationType.JOB_CREATED,
         'New Job Near You',
         `${title} — ₹${price}`,
-        { job_id: (job as any).id }
+        { job_id: job.id }
       );
     }
 
@@ -75,7 +75,7 @@ class JobService {
       throw new CustomError(404, Messages.USER_NOT_FOUND);
     }
 
-    return JobRepository.findByLocation((user as any).city, (user as any).area);
+    return JobRepository.findByLocation(user.city, user.area);
   }
 
   async getJobById(jobId: string) {
@@ -95,7 +95,7 @@ class JobService {
       throw new CustomError(404, Messages.JOB_NOT_FOUND);
     }
 
-    if ((job as any).created_by !== userId) {
+    if (job.created_by !== userId) {
       throw new CustomError(403, Messages.JOB_UNAUTHORIZED);
     }
 
@@ -122,20 +122,22 @@ class JobService {
       throw new CustomError(404, Messages.JOB_NOT_FOUND);
     }
 
-    if ((job as any).created_by !== userId) {
+    if (job.created_by !== userId) {
       throw new CustomError(403, Messages.JOB_UNAUTHORIZED);
     }
 
     const terminal: JobStatus[] = [JobStatus.COMPLETED, JobStatus.CANCELLED, JobStatus.EXPIRED];
-    if (terminal.includes((job as any).status)) {
+    if (terminal.includes(job.status)) {
       throw new CustomError(400, Messages.JOB_CANCEL_INVALID_STATE);
     }
 
-    await JobRepository.update(jobId, {
+    const updateData: IJobUpdateData = {
       status: JobStatus.CANCELLED,
       cancelled_by: userId,
       cancellation_reason: reason || null,
-    } as any);
+    };
+
+    await JobRepository.update(jobId, updateData);
 
     const workerIds = await JobResponseRepository.findAcceptedWorkerIds(jobId);
     if (workerIds.length) {
@@ -143,7 +145,7 @@ class JobService {
         workerIds,
         NotificationType.JOB_CANCELLED,
         'Job Cancelled',
-        `The job "${(job as any).title}" has been cancelled.`,
+        `The job "${job.title}" has been cancelled.`,
         { job_id: jobId }
       );
     }
@@ -156,15 +158,15 @@ class JobService {
       throw new CustomError(404, Messages.JOB_NOT_FOUND);
     }
 
-    if ((job as any).created_by !== userId) {
+    if (job.created_by !== userId) {
       throw new CustomError(403, Messages.JOB_UNAUTHORIZED);
     }
 
-    if (!([JobStatus.FULL, JobStatus.PARTIALLY_ACCEPTED] as JobStatus[]).includes((job as any).status)) {
+    if (!([JobStatus.FULL, JobStatus.PARTIALLY_ACCEPTED] as JobStatus[]).includes(job.status)) {
       throw new CustomError(400, Messages.JOB_COMPLETE_INVALID_STATE);
     }
 
-    await JobRepository.update(jobId, { status: JobStatus.COMPLETED } as any);
+    await JobRepository.update(jobId, { status: JobStatus.COMPLETED });
 
     const workerIds = await JobResponseRepository.findAcceptedWorkerIds(jobId);
     const allIds = [...new Set([...workerIds, userId])];
@@ -172,7 +174,7 @@ class JobService {
       allIds,
       NotificationType.JOB_COMPLETED,
       'Job Completed',
-      `The job "${(job as any).title}" has been marked as completed.`,
+      `The job "${job.title}" has been marked as completed.`,
       { job_id: jobId }
     );
   }

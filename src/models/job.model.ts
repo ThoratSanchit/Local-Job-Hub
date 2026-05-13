@@ -1,8 +1,9 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/instance";
 import { JobStatus } from "../constants/job.constants";
+import { ICreateJobData, IJob } from "../interfaces/job.interface";
 
-class Job extends Model {
+class Job extends Model<IJob, ICreateJobData> implements IJob {
   public id!: string;
   public title!: string;
   public description!: string;
@@ -18,6 +19,7 @@ class Job extends Model {
   public cancelled_by!: string | null;
   public cancellation_reason!: string | null;
   public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 }
 
 Job.init(
