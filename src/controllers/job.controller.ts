@@ -2,7 +2,12 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import JobService from '../services/job.service';
 import Messages from '../language/en/message.language';
 import CustomError from '../utility/customError.utility';
-import { ICreateJobRequest, IUpdateJobRequest } from '../interfaces/job.interface';
+import {
+  ICancelJobRequest,
+  ICreateJobRequest,
+  IJobParams,
+  IUpdateJobRequest,
+} from '../interfaces/job.interface';
 
 class JobController {
   async createJob(req: FastifyRequest<{ Body: ICreateJobRequest }>, reply: FastifyReply) {
@@ -57,7 +62,7 @@ class JobController {
     }
   }
 
-  async getJobById(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+  async getJobById(req: FastifyRequest<{ Params: IJobParams }>, reply: FastifyReply) {
     try {
       const job = await JobService.getJobById(req.params.id);
 
@@ -82,7 +87,7 @@ class JobController {
     }
   }
 
-  async updateJob(req: FastifyRequest<{ Params: { id: string }; Body: IUpdateJobRequest }>, reply: FastifyReply) {
+  async updateJob(req: FastifyRequest<{ Params: IJobParams; Body: IUpdateJobRequest }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;
       const job = await JobService.updateJob(userId, req.params.id, req.body);
@@ -108,7 +113,7 @@ class JobController {
     }
   }
 
-  async cancelJob(req: FastifyRequest<{ Params: { id: string }; Body: { reason?: string } }>, reply: FastifyReply) {
+  async cancelJob(req: FastifyRequest<{ Params: IJobParams; Body: ICancelJobRequest }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;
       await JobService.cancelJob(userId, req.params.id, req.body?.reason);
@@ -133,7 +138,7 @@ class JobController {
     }
   }
 
-  async completeJob(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+  async completeJob(req: FastifyRequest<{ Params: IJobParams }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;
       await JobService.completeJob(userId, req.params.id);
