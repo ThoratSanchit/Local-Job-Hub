@@ -176,6 +176,18 @@ class JobService {
       { job_id: jobId }
     );
   }
+
+  getMyPostedJobs(userId: string) {
+    return JobRepository.findByCreator(userId);
+  }
+
+  getMyAcceptedJobs(userId: string) {
+    return JobResponseRepository.findByWorkerAccepted(userId);
+  }
+
+  getMyApplications(userId: string) {
+    return JobResponseRepository.findByWorkerAll(userId);
+  }
 }
 
 export default new JobService();

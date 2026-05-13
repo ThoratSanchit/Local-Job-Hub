@@ -60,6 +60,14 @@ class JobResponseRepository {
       order: [['createdAt', 'DESC']],
     });
   }
+
+  findByWorkerAll(worker_id: string) {
+    return JobResponse.findAll({
+      where: { worker_id },
+      include: [{ model: require('../models/job.model').default, as: 'job' }],
+      order: [['createdAt', 'DESC']],
+    });
+  }
 }
 
 export default new JobResponseRepository();

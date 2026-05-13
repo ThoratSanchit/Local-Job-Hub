@@ -9,6 +9,9 @@ const jobRoutes: FastifyPluginAsync = async (fastify: FastifyInstance, _options:
 
   fastify.post('/', { schema: createJobSchema }, JobController.createJob);
   fastify.get('/', JobController.getJobs);
+  fastify.get('/posted', JobController.getMyPostedJobs);
+  fastify.get('/accepted', JobController.getMyAcceptedJobs);
+  fastify.get('/applied', JobController.getMyApplications);
   fastify.get('/:id', JobController.getJobById);
   fastify.put('/:id', { schema: updateJobSchema }, JobController.updateJob);
   fastify.put('/:id/cancel', JobController.cancelJob);
