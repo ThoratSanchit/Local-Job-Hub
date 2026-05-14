@@ -9,10 +9,6 @@ const userRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   fastify.get<{ Params: { id: string } }>('/:id', (req, reply) => UserController.getUser(req, reply));
   fastify.put('/me', (req, reply) => UserController.updateProfile(req as any, reply));
   fastify.patch('/me/availability', (req, reply) => UserController.toggleAvailability(req as any, reply));
-  fastify.get('/me', UserController.getMe);
-  fastify.get('/:id', UserController.getUser);
-  fastify.put('/me', UserController.updateProfile);
-  fastify.patch('/me/availability', UserController.toggleAvailability);
 };
 
 export default userRoutes;

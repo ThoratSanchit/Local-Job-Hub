@@ -10,7 +10,7 @@ export const registerRoutes = async (fastify: FastifyInstance) => {
   fastify.register(authRoutes, { prefix: '/api/auth' });
   fastify.register(userRoutes, { prefix: '/api/users' });
   fastify.register(jobRoutes, { prefix: '/api/jobs' });
-  fastify.register(messageRoutes, { prefix: '/api/jobs' }); // Same prefix as jobs as they are sub-resources
+  fastify.register(messageRoutes, { prefix: '/api/messages' });
   fastify.register(reviewRoutes, { prefix: '/api/jobs' });  // Same prefix as jobs
   fastify.register(notificationRoutes, { prefix: '/api/notifications' });
 };
