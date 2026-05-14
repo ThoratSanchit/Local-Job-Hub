@@ -3,10 +3,10 @@ import { sequelize } from '../config/instance';
 
 class Message extends Model {
   public id!: string;
-  public job_id!: string;
+  public conversation_id!: string;
   public sender_id!: string;
-  public receiver_id!: string;
   public content!: string;
+  public is_read!: boolean;
   public readonly createdAt!: Date;
 }
 
@@ -17,7 +17,7 @@ Message.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    job_id: {
+    conversation_id: {
       type: DataTypes.UUID,
       allowNull: false
     },
@@ -25,9 +25,9 @@ Message.init(
       type: DataTypes.UUID,
       allowNull: false
     },
-    receiver_id: {
-      type: DataTypes.UUID,
-      allowNull: false
+    is_read: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     },
     content: {
       type: DataTypes.TEXT,
