@@ -69,13 +69,7 @@ class JobService {
   }
 
   async getJobs(userId: string) {
-    const user = await UserRepository.findById(userId);
-
-    if (!user) {
-      throw new CustomError(404, Messages.USER_NOT_FOUND);
-    }
-
-    return JobRepository.findByLocation(user.city, user.area);
+    return JobRepository.findAll();
   }
 
   async getJobById(jobId: string) {

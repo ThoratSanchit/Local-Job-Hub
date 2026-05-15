@@ -1,5 +1,4 @@
 import Job from '../models/job.model';
-import { JobStatus } from '../constants/job.constants';
 import User from '../models/user.model';
 import { ICreateJobData, IJobUpdateData, IUpdateJobData } from '../interfaces/job.interface';
 
@@ -14,9 +13,8 @@ class JobRepository {
     });
   }
 
-  findByLocation(city: string, area: string) {
+  findAll() {
     return Job.findAll({
-      where: { city, area, status: [JobStatus.OPEN, JobStatus.PARTIALLY_ACCEPTED] },
       include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'rating'] }],
       order: [
         ['urgent', 'DESC'],
