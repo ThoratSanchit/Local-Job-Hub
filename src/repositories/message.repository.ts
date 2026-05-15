@@ -17,6 +17,13 @@ class MessageRepository {
     });
   }
 
+  findLatestByConversation(conversation_id: string) {
+    return Message.findOne({
+      where: { conversation_id },
+      order: [['createdAt', 'DESC']]
+    });
+  }
+
   markAsRead(conversation_id: string, exclude_sender_id: string) {
     return Message.update(
       { is_read: true },

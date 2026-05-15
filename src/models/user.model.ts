@@ -16,6 +16,7 @@ class User extends Model {
   public completion_rate!: number;
   public is_verified!: boolean;
   public availability_status!: AvailabilityStatus;
+  public last_seen!: Date;
   public readonly createdAt!: Date;
 }
 
@@ -70,6 +71,10 @@ User.init(
     availability_status: {
       type: DataTypes.ENUM(...Object.values(AvailabilityStatus)),
       defaultValue: AvailabilityStatus.OFFLINE,
+    },
+    last_seen: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
   },
   {

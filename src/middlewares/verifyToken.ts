@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify';
 import jwt from 'jsonwebtoken';
+import User from '../models/user.model';
 
 export const verifyToken = (req: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) => {
     const authHeader = req.headers['authorization'];
@@ -20,6 +21,13 @@ export const verifyToken = (req: FastifyRequest, reply: FastifyReply, done: Hook
         
         // Attach decoded user info to request
         (req as any).user = decoded;
+
+        if (decoded && decoded.id) {
+            User.update({ last_seen: new Date() }, { where: { id: decoded.id } }).catch(e => {
+                req.log?.error?.('Error updating last_seen:', e);
+            });
+        }
+
         done();
     });
 };
