@@ -5,6 +5,8 @@ import JobResponseRepository from '../repositories/jobResponse.repository';
 import { JobStatus } from '../constants/job.constants';
 import CustomError from '../utility/customError.utility';
 import Messages from '../language/en/message.language';
+import { Op } from 'sequelize';
+import Message from '../models/message.model';
 
 const MESSAGEABLE_STATUSES: JobStatus[] = [
   JobStatus.PARTIALLY_ACCEPTED,
@@ -50,7 +52,7 @@ class MessageService {
     const workerId = senderId === creatorId ? receiverId : senderId;
 
     let conversation = await ConversationRepository.findByJobAndParticipants(jobId, creatorId, workerId);
-    
+
     if (!conversation) {
       conversation = await ConversationRepository.create({
         job_id: jobId,
@@ -86,7 +88,27 @@ class MessageService {
   }
 
   async getInbox(userId: string) {
-    return ConversationRepository.findUserInbox(userId);
+    const conversations = await ConversationRepository.findUserInbox(userId);
+
+    const inbox = await Promise.all(conversations.map(async (conv: any) => {
+      const latestMessage = await MessageRepository.findLatestByConversation(conv.id);
+
+      const unreadCount = await Message.count({
+        where: {
+          conversation_id: conv.id,
+          sender_id: { [Op.ne]: userId },
+          is_read: false
+        }
+      });
+
+      return {
+        ...conv.toJSON(),
+        latest_message: latestMessage,
+        unread_count: unreadCount
+      };
+    }));
+
+    return inbox;
   }
 }
 
