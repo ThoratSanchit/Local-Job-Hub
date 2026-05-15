@@ -6,7 +6,12 @@ import Message from './message.model';
 import Review from './review.model';
 import Notification from './notification.model';
 
+let associationsInitialized = false;
+
 export const setupAssociations = () => {
+  if (associationsInitialized) return;
+  associationsInitialized = true;
+
   // Job ↔ User
   Job.belongsTo(User, { foreignKey: 'created_by', as: 'creator' });
   User.hasMany(Job, { foreignKey: 'created_by', as: 'jobs' });
@@ -18,8 +23,8 @@ export const setupAssociations = () => {
 
   // Conversation ↔ Job & Users
   Conversation.belongsTo(Job, { foreignKey: 'job_id', as: 'job' });
-  Conversation.belongsTo(User, { foreignKey: 'creator_id', as: 'creator' });
-  Conversation.belongsTo(User, { foreignKey: 'worker_id', as: 'worker' });
+  Conversation.belongsTo(User, { foreignKey: 'creator_id', as: 'conversationCreator' }); // renamed from 'creator' to avoid alias conflict with Job.belongsTo(User)
+  Conversation.belongsTo(User, { foreignKey: 'worker_id', as: 'conversationWorker' }); // renamed from 'worker' to avoid alias conflict with JobResponse.belongsTo(User)
   Job.hasMany(Conversation, { foreignKey: 'job_id', as: 'conversations' });
 
   // Message ↔ Conversation & Sender
@@ -30,7 +35,7 @@ export const setupAssociations = () => {
   // Review ↔ Job & User
   Review.belongsTo(Job, { foreignKey: 'job_id', as: 'job' });
   Review.belongsTo(User, { foreignKey: 'reviewer_id', as: 'reviewer' });
-  Review.belongsTo(User, { foreignKey: 'worker_id', as: 'worker' });
+  Review.belongsTo(User, { foreignKey: 'worker_id', as: 'reviewWorker' }); // renamed from 'worker' to avoid alias conflict
 
   // Notification ↔ User
   Notification.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
