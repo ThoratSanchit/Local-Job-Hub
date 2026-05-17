@@ -10,6 +10,8 @@ export const createJobSchema = {
       workers_required: { type: 'integer', minimum: 1 },
       urgent: { type: 'boolean' },
       expires_at: { type: 'string', format: 'date-time' },
+      city: { type: 'string', minLength: 1 },
+      area: { type: 'string', minLength: 1 },
     },
   },
 };
@@ -31,6 +33,8 @@ export const updateJobSchema = {
           { type: 'null' },
         ],
       },
+      city: { type: 'string', minLength: 1 },
+      area: { type: 'string', minLength: 1 },
     },
     additionalProperties: false,
   },

@@ -240,6 +240,32 @@ class JobController {
       });
     }
   }
+
+  async applyJob(req: FastifyRequest<{ Params: IJobParams }>, reply: FastifyReply) {
+    try {
+      const userId = (req as any).user.id;
+      const response = await JobService.applyJob(userId, req.params.id);
+
+      return reply.code(201).send({
+        statusCode: 201,
+        message: Messages.RESPONSE_SUBMITTED,
+        data: response,
+      });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
+      req.log.error(err);
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
+    }
+  }
 }
 
 export default new JobController();

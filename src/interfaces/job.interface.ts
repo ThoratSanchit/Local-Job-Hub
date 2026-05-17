@@ -27,6 +27,8 @@ export interface ICreateJobRequest {
   workers_required?: number;
   urgent?: boolean;
   expires_at?: string;
+  city?: string;
+  area?: string;
 }
 export interface ICreateJobData {
   title: string;
@@ -50,6 +52,8 @@ export interface IUpdateJobRequest {
   workers_required?: number;
   urgent?: boolean;
   expires_at?: string | null;
+  city?: string;
+  area?: string;
 }
 
 export interface IJobParams {
@@ -68,6 +72,8 @@ export interface IUpdateJobData {
   workers_required?: number;
   urgent?: boolean;
   expires_at?: Date | null;
+  city?: string;
+  area?: string;
 }
 
 export interface IJobUpdateData extends IUpdateJobData {
