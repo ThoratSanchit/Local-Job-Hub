@@ -241,6 +241,32 @@ class JobController {
     }
   }
 
+  async searchJobs(req: FastifyRequest<{ Body: any }>, reply: FastifyReply) {
+    try {
+      const userId = (req as any).user.id;
+      const jobs = await JobService.searchJobs(userId, req.body);
+
+      return reply.code(200).send({
+        statusCode: 200,
+        message: Messages.JOBS_FETCHED,
+        data: jobs,
+      });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
+      req.log.error(err);
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
+    }
+  }
+
   async applyJob(req: FastifyRequest<{ Params: IJobParams }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;

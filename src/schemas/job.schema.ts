@@ -39,3 +39,16 @@ export const updateJobSchema = {
     additionalProperties: false,
   },
 };
+
+export const searchJobSchema = {
+  body: {
+    type: 'object',
+    properties: {
+      keyword: { type: 'string' },
+      category: { type: 'string' },
+      city: { type: 'string' },
+      area: { type: 'string' },
+    },
+    additionalProperties: false,
+  },
+};
