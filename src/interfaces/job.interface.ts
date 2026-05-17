@@ -81,3 +81,10 @@ export interface IJobUpdateData extends IUpdateJobData {
   cancelled_by?: string | null;
   cancellation_reason?: string | null;
 }
+
+export interface ISearchJobRequest {
+  keyword?: string;
+  category?: string;
+  city?: string;
+  area?: string;
+}

@@ -187,6 +187,26 @@ class JobService {
     return JobResponseRepository.findByWorkerAll(userId);
   }
 
+  async searchJobs(userId: string, data: any) {
+    const filters: any = {
+      created_by: { [Op.ne]: userId },
+      status: JobStatus.OPEN,
+    };
+
+    if (data.category) filters.category = data.category;
+    if (data.city) filters.city = data.city;
+    if (data.area) filters.area = data.area;
+    
+    if (data.keyword) {
+      filters[Op.or] = [
+        { title: { [Op.like]: `%${data.keyword}%` } },
+        { description: { [Op.like]: `%${data.keyword}%` } },
+      ];
+    }
+
+    return JobRepository.searchJobs(userId, filters);
+  }
+
   async applyJob(workerId: string, jobId: string) {
     const job = await JobRepository.findById(jobId);
     if (!job) {

@@ -41,6 +41,17 @@ class JobRepository {
       order: [['createdAt', 'DESC']],
     });
   }
+
+  searchJobs(userId: string, filters: any) {
+    return Job.findAll({
+      where: filters,
+      include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'rating', 'city', 'area'] }],
+      order: [
+        ['urgent', 'DESC'],
+        ['createdAt', 'DESC'],
+      ],
+    });
+  }
 }
 
 export default new JobRepository();
