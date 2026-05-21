@@ -9,6 +9,13 @@ class Job extends Model<IJob, ICreateJobData> implements IJob {
   public description!: string;
   public category!: string;
   public price!: number;
+  public payment_type!: string | null;
+  public work_duration!: string | null;
+  public start_date!: string | null;
+  public preferred_time!: string | null;
+  public full_address!: string | null;
+  public latitude!: number | null;
+  public longitude!: number | null;
   public city!: string;
   public area!: string;
   public created_by!: string;
@@ -16,6 +23,8 @@ class Job extends Model<IJob, ICreateJobData> implements IJob {
   public status!: JobStatus;
   public urgent!: boolean;
   public expires_at!: Date | null;
+  public need_workers_immediately!: boolean;
+  public requirements!: string[] | null;
   public cancelled_by!: string | null;
   public cancellation_reason!: string | null;
   public readonly createdAt!: Date;
@@ -44,6 +53,41 @@ Job.init(
     price: {
       type: DataTypes.FLOAT,
       allowNull: false
+    },
+    payment_type: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    work_duration: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    start_date: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    preferred_time: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    full_address: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+    },
+    latitude: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+      defaultValue: null,
+    },
+    longitude: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+      defaultValue: null,
     },
     city: {
       type: DataTypes.STRING,
@@ -76,6 +120,16 @@ Job.init(
         DataTypes.DATE,
       allowNull: true,
       defaultValue: null
+    },
+    need_workers_immediately: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    requirements: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: null,
     },
     cancelled_by: {
       type: DataTypes.UUID,
