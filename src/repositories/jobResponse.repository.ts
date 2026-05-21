@@ -18,7 +18,7 @@ class JobResponseRepository {
   findByJob(job_id: string) {
     return JobResponse.findAll({
       where: { job_id },
-      include: [{ model: User, as: 'worker', attributes: ['id', 'name', 'rating', 'city', 'area'] }],
+      include: [{ model: User, as: 'worker'}],
     });
   }
 

@@ -9,7 +9,15 @@ class JobRepository {
 
   findById(id: string) {
     return Job.findByPk(id, {
-      include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'rating', 'city', 'area'] }],
+      include: [{ 
+        model: User, 
+        as: 'creator', 
+        attributes: [
+          'id', 'name', 'mobile_number', 'profile_photo', 'rating', 
+          'city', 'area', 'is_verified', 'total_jobs_completed', 
+          'completion_rate', 'availability_status', 'last_seen', 'gender'
+        ] 
+      }],
     });
   }
 
