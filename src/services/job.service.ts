@@ -7,7 +7,12 @@ import { NotificationType } from '../constants/notification.constants';
 import { notify, notifyMany } from '../utility/notification.utility';
 import CustomError from '../utility/customError.utility';
 import Messages from '../language/en/message.language';
-import { ICreateJobRequest, IJobUpdateData, IUpdateJobData, IUpdateJobRequest } from '../interfaces/job.interface';
+import {
+  ICreateJobRequest,
+  IJobUpdateData,
+  IUpdateJobData,
+  IUpdateJobRequest,
+} from '../interfaces/job.interface';
 import { Op } from 'sequelize';
 
 class JobService {
@@ -17,18 +22,26 @@ class JobService {
       description,
       category,
       price,
+      payment_type,
+      work_duration,
+      start_date,
+      preferred_time,
+      full_address,
+      latitude,
+      longitude,
       workers_required,
       urgent,
       expires_at,
+      need_workers_immediately,
+      requirements,
       city,
-      area
+      area,
     } = data;
 
     const creator = await UserRepository.findById(userId);
     if (!creator) {
       throw new CustomError(404, Messages.USER_NOT_FOUND);
     }
-
     if (expires_at && new Date(expires_at) <= new Date()) {
       throw new CustomError(400, Messages.EXPIRES_AT_MUST_BE_FUTURE);
     }
@@ -38,12 +51,21 @@ class JobService {
       description,
       category,
       price,
+      payment_type: payment_type || null,
+      work_duration: work_duration || null,
+      start_date: start_date || null,
+      preferred_time: preferred_time || null,
+      full_address: full_address || null,
+      latitude: latitude ?? null,
+      longitude: longitude ?? null,
       city: city || creator.city,
       area: area || creator.area,
       created_by: userId,
       workers_required: workers_required || 1,
       urgent: !!urgent,
       expires_at: expires_at ? new Date(expires_at) : null,
+      need_workers_immediately: !!need_workers_immediately,
+      requirements: requirements?.length ? requirements : null,
       status: JobStatus.OPEN,
     });
 
@@ -62,7 +84,7 @@ class JobService {
         ids,
         NotificationType.JOB_CREATED,
         'New Job Near You',
-        `${title} — ₹${price}`,
+        `${title} - Rs ${price}`,
         { job_id: job.id }
       );
     }
@@ -105,7 +127,6 @@ class JobService {
 
       updateData.expires_at = expires_at ? new Date(expires_at) : null;
     }
-
     await JobRepository.updateJob(jobId, updateData);
 
     return this.getJobById(jobId);
@@ -196,7 +217,7 @@ class JobService {
     if (data.category) filters.category = data.category;
     if (data.city) filters.city = data.city;
     if (data.area) filters.area = data.area;
-    
+
     if (data.keyword) {
       filters[Op.or] = [
         { title: { [Op.like]: `%${data.keyword}%` } },
@@ -220,7 +241,6 @@ class JobService {
     if (j.expires_at && new Date(j.expires_at) < new Date()) {
       throw new CustomError(400, Messages.JOB_EXPIRED);
     }
-
     const openStatuses: JobStatus[] = [JobStatus.OPEN, JobStatus.PARTIALLY_ACCEPTED];
     if (!openStatuses.includes(j.status)) {
       throw new CustomError(400, Messages.JOB_NOT_OPEN);
@@ -238,7 +258,7 @@ class JobService {
         user_id: j.created_by,
         type: NotificationType.NEW_RESPONSE,
         title: 'New Worker Response',
-        body: `Someone applied to your job`,
+        body: 'Someone applied to your job',
         meta: { job_id: jobId },
       });
 

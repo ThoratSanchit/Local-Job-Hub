@@ -127,17 +127,27 @@ Authorization: Bearer <token>
 **Create job body:**
 ```json
 {
-  "title": "Need 2 movers",
-  "description": "Home shifting from 3rd floor, heavy furniture",
-  "category": "Labour",
-  "price": 800,
+  "title": "House shifting helper",
+  "description": "Need 2 helpers for moving furniture from a 3BHK flat.",
+  "category": "Shifting",
+  "price": 500,
+  "payment_type": "PER_WORKER",
   "workers_required": 2,
-  "urgent": false
+  "work_duration": "2 HOURS",
+  "start_date": "2026-05-20",
+  "preferred_time": "09:00 AM",
+  "full_address": "House no, Street name, Landmark",
+  "latitude": 19.076,
+  "longitude": 72.8777,
+  "urgent": false,
+  "need_workers_immediately": true,
+  "requirements": ["HEAVY_LIFTING", "TOOLS_PROVIDED"],
+  "city": "Mumbai",
+  "area": "Bandra West"
 }
 ```
 
-> City and area are automatically taken from the creator's profile.
-> `urgent: true` → expires in 1 hour. `urgent: false` → expires in 24 hours.
+> `city` and `area` still default to the creator profile if omitted.
 
 **Cancel job body (optional):**
 ```json
@@ -255,7 +265,8 @@ Only the job creator can review accepted workers after the job is completed.
 | workers_required | int | |
 | status | enum | See lifecycle above |
 | urgent | boolean | |
-| expires_at | datetime | Auto-set on creation |
+| expires_at | datetime | Auto-set on 
+creation |
 | cancelled_by | UUID | nullable |
 | cancellation_reason | text | nullable |
 

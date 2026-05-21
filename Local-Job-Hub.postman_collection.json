@@ -200,7 +200,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Plumber needed for bathroom repair\",\n  \"description\": \"Need a plumber to fix a leaking pipe in the bathroom. Must bring own tools.\",\n  \"category\": \"Plumbing\",\n  \"price\": 500,\n  \"workers_required\": 1,\n  \"urgent\": true,\n  \"expires_at\": \"2026-05-01T10:00:00.000Z\"\n}"
+              "raw": "{\n  \"title\": \"House shifting helper\",\n  \"description\": \"Need 2 helpers for moving furniture from a 3BHK flat.\",\n  \"category\": \"Shifting\",\n  \"price\": 500,\n  \"payment_type\": \"PER_WORKER\",\n  \"workers_required\": 2,\n  \"work_duration\": \"2 HOURS\",\n  \"start_date\": \"2026-05-20\",\n  \"preferred_time\": \"09:00 AM\",\n  \"full_address\": \"House no, Street name, Landmark\",\n  \"latitude\": 19.076,\n  \"longitude\": 72.8777,\n  \"urgent\": false,\n  \"need_workers_immediately\": true,\n  \"requirements\": [\"HEAVY_LIFTING\", \"TOOLS_PROVIDED\"],\n  \"city\": \"Mumbai\",\n  \"area\": \"Bandra West\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/jobs",
