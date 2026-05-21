@@ -79,9 +79,27 @@ export const searchJobSchema = {
     type: 'object',
     properties: {
       keyword: { type: 'string' },
-      category: { type: 'string' },
+      category: {
+        anyOf: [
+          { type: 'string' },
+          { type: 'array', items: { type: 'string' } },
+        ],
+      },
       city: { type: 'string' },
       area: { type: 'string' },
+      minSalary: { type: 'number' },
+      maxSalary: { type: 'number' },
+      workDuration: {
+        anyOf: [
+          { type: 'string' },
+          { type: 'array', items: { type: 'string' } },
+        ],
+      },
+      isUrgent: { type: 'boolean' },
+      isNew: { type: 'boolean' },
+      distance: { type: 'number' },
+      latitude: { type: 'number' },
+      longitude: { type: 'number' },
     },
     additionalProperties: false,
   },

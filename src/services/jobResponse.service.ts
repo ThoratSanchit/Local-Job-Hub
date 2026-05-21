@@ -13,7 +13,27 @@ class JobResponseService {
     if (!job) throw new CustomError(404, Messages.JOB_NOT_FOUND);
     if ((job as any).created_by !== userId) throw new CustomError(403, Messages.JOB_UNAUTHORIZED);
 
-    return JobResponseRepository.findByJob(jobId);
+    const responses = await JobResponseRepository.findByJob(jobId);
+    const workers = responses.map((r: any) => {
+      const worker = r.worker ? r.worker.toJSON() : {};
+      return {
+        ...worker,
+        response_id: r.id,
+        status: r.status,
+        applied_at: r.createdAt
+      };
+    });
+
+    return {
+      job: {
+        id: job.id,
+        title: job.title,
+        city: job.city,
+        area: job.area,
+        application_count: responses.length,
+      },
+      workers: workers
+    };
   }
 
   async acceptWorker(userId: string, jobId: string, responseId: string) {

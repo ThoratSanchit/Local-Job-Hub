@@ -9,8 +9,8 @@ class JobResponseController {
       const userId = (req as any).user.id;
       const { jobId } = req.params;
 
-      const responses = await JobResponseService.getResponses(userId, jobId);
-      return reply.code(200).send({ data: responses });
+      const result = await JobResponseService.getResponses(userId, jobId);
+      return reply.code(200).send({ job: result.job, data: result.workers });
     } catch (err) {
       if (err instanceof CustomError) {
         return reply.code(err.statusCode).send({ message: err.message });

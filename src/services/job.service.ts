@@ -14,6 +14,7 @@ import {
   IUpdateJobRequest,
 } from '../interfaces/job.interface';
 import { Op } from 'sequelize';
+import { sequelize } from '../config/instance';
 
 class JobService {
   async createJob(userId: string, data: ICreateJobRequest) {
@@ -214,7 +215,14 @@ class JobService {
       status: JobStatus.OPEN,
     };
 
-    if (data.category) filters.category = data.category;
+    if (data.category) {
+      if (Array.isArray(data.category)) {
+        filters.category = { [Op.in]: data.category };
+      } else {
+        filters.category = data.category;
+      }
+    }
+    
     if (data.city) filters.city = data.city;
     if (data.area) filters.area = data.area;
 
@@ -223,6 +231,48 @@ class JobService {
         { title: { [Op.like]: `%${data.keyword}%` } },
         { description: { [Op.like]: `%${data.keyword}%` } },
       ];
+    }
+
+    if (data.minSalary !== undefined || data.maxSalary !== undefined) {
+      filters.price = {};
+      if (data.minSalary !== undefined) filters.price[Op.gte] = data.minSalary;
+      if (data.maxSalary !== undefined) filters.price[Op.lte] = data.maxSalary;
+    }
+
+    if (data.workDuration) {
+      if (Array.isArray(data.workDuration)) {
+        filters.work_duration = { [Op.in]: data.workDuration };
+      } else {
+        filters.work_duration = data.workDuration;
+      }
+    }
+
+    if (data.isUrgent) {
+      filters.urgent = true;
+    }
+
+    if (data.isNew) {
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      filters.createdAt = { [Op.gte]: threeDaysAgo };
+    }
+
+    if (data.distance !== undefined && data.latitude !== undefined && data.longitude !== undefined) {
+      const haversine = `(
+        6371 * acos(
+          cos(radians(${data.latitude}))
+          * cos(radians(latitude))
+          * cos(radians(longitude) - radians(${data.longitude}))
+          + sin(radians(${data.latitude})) * sin(radians(latitude))
+        )
+      )`;
+      
+      filters[Op.and] = filters[Op.and] || [];
+      filters[Op.and].push(
+        sequelize.where(sequelize.literal(haversine), {
+          [Op.lte]: data.distance
+        })
+      );
     }
 
     return JobRepository.searchJobs(userId, filters);
