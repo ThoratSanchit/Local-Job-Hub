@@ -55,7 +55,7 @@ export const init = async () => {
   // Register routes
   await registerRoutes(fastify);
 
-  await sequelize.sync({ alter: true });
+  await sequelize.sync();
   console.log('Database tables synced successfully.');
 
   startExpiryScheduler();
