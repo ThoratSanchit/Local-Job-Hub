@@ -19,8 +19,7 @@ const jobRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   fastify.put('/:id/cancel', JobController.cancelJob);
   fastify.put('/:id/complete', JobController.completeJob);
   fastify.get('/:jobId/responses', JobResponseController.getResponses);
-  fastify.put('/:jobId/responses/:responseId/accept', JobResponseController.acceptWorker);
-  fastify.put('/:jobId/responses/:responseId/reject', JobResponseController.rejectWorker);
+  fastify.put('/:jobId/responses/:responseId/status', JobResponseController.updateResponseStatus);
 };
 
 export default jobRoutes;
