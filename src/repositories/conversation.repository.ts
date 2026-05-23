@@ -18,8 +18,8 @@ class ConversationRepository {
     return Conversation.findByPk(id, {
       include: [
         { model: Job, as: 'job', attributes: ['id', 'title'] },
-        { model: User, as: 'conversationCreator', attributes: ['id', 'name'] },
-        { model: User, as: 'conversationWorker', attributes: ['id', 'name'] }
+        { model: User, as: 'conversationCreator', attributes: ['id', 'name', 'last_seen', 'availability_status', 'profile_photo'] },
+        { model: User, as: 'conversationWorker', attributes: ['id', 'name', 'last_seen', 'availability_status', 'profile_photo'] }
       ]
     });
   }
@@ -31,8 +31,8 @@ class ConversationRepository {
       },
       include: [
         { model: Job, as: 'job', attributes: ['id', 'title'] },
-        { model: User, as: 'conversationCreator', attributes: ['id', 'name'] },
-        { model: User, as: 'conversationWorker', attributes: ['id', 'name'] }
+        { model: User, as: 'conversationCreator', attributes: ['id', 'name', 'last_seen', 'availability_status', 'profile_photo'] },
+        { model: User, as: 'conversationWorker', attributes: ['id', 'name', 'last_seen', 'availability_status', 'profile_photo'] }
       ],
       order: [['last_message_at', 'DESC']]
     });

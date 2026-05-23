@@ -101,8 +101,15 @@ class MessageService {
         }
       });
 
+      const convJson = conv.toJSON();
+      const isCreator = convJson.creator_id === userId;
+      const otherUser = isCreator ? convJson.conversationWorker : convJson.conversationCreator;
+      delete convJson.conversationWorker;
+      delete convJson.conversationCreator;
+
       return {
-        ...conv.toJSON(),
+        ...convJson,
+        participant: otherUser,
         latest_message: latestMessage,
         unread_count: unreadCount
       };

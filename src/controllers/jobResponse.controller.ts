@@ -20,28 +20,22 @@ class JobResponseController {
     }
   }
 
-  async acceptWorker(req: FastifyRequest<{ Params: { jobId: string; responseId: string } }>, reply: FastifyReply) {
+  async updateResponseStatus(req: FastifyRequest<{ Params: { jobId: string; responseId: string }; Body: { status: string } }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;
       const { jobId, responseId } = req.params;
+      const { status } = req.body;
 
-      const result = await JobResponseService.acceptWorker(userId, jobId, responseId);
-      return reply.code(200).send(result);
-    } catch (err) {
-      if (err instanceof CustomError) {
-        return reply.code(err.statusCode).send({ message: err.message });
+      if (status !== 'ACCEPTED' && status !== 'REJECTED') {
+        return reply.code(400).send({ message: "Invalid status. Must be 'ACCEPTED' or 'REJECTED'" });
       }
-      req.log.error(err);
-      return reply.code(500).send({ message: Messages.INTERNAL_SERVER_ERROR });
-    }
-  }
 
-  async rejectWorker(req: FastifyRequest<{ Params: { jobId: string; responseId: string } }>, reply: FastifyReply) {
-    try {
-      const userId = (req as any).user.id;
-      const { jobId, responseId } = req.params;
-
-      const result = await JobResponseService.rejectWorker(userId, jobId, responseId);
+      let result;
+      if (status === 'ACCEPTED') {
+        result = await JobResponseService.acceptWorker(userId, jobId, responseId);
+      } else {
+        result = await JobResponseService.rejectWorker(userId, jobId, responseId);
+      }
       return reply.code(200).send(result);
     } catch (err) {
       if (err instanceof CustomError) {
