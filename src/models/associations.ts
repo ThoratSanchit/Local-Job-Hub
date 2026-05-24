@@ -5,6 +5,7 @@ import Conversation from './conversation.model';
 import Message from './message.model';
 import Review from './review.model';
 import Notification from './notification.model';
+import RecentSearch from './recentSearch.model';
 
 let associationsInitialized = false;
 
@@ -39,4 +40,8 @@ export const setupAssociations = () => {
 
   // Notification ↔ User
   Notification.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+  // RecentSearch to User
+  RecentSearch.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+  User.hasMany(RecentSearch, { foreignKey: 'user_id', as: 'recentSearches' });
 };
