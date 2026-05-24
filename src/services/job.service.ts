@@ -9,6 +9,7 @@ import CustomError from '../utility/customError.utility';
 import Messages from '../language/en/message.language';
 import {
   ICreateJobRequest,
+  IGetJobsQuery,
   IJobUpdateData,
   IUpdateJobData,
   IUpdateJobRequest,
@@ -93,8 +94,21 @@ class JobService {
     return job;
   }
 
-  async getJobs(userId: string) {
-    return JobRepository.findAll();
+  async getJobs(userId: string, query: Required<IGetJobsQuery>) {
+    const page = Math.max(1, Number(query.page) || 1);
+    const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
+    const offset = (page - 1) * limit;
+    const { count, rows } = await JobRepository.findAll({ limit, offset });
+
+    return {
+      jobs: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
+    };
   }
 
   async getJobById(jobId: string) {
@@ -222,7 +236,7 @@ class JobService {
         filters.category = data.category;
       }
     }
-    
+
     if (data.city) filters.city = data.city;
     if (data.area) filters.area = data.area;
 
@@ -266,7 +280,7 @@ class JobService {
           + sin(radians(${data.latitude})) * sin(radians(latitude))
         )
       )`;
-      
+
       filters[Op.and] = filters[Op.and] || [];
       filters[Op.and].push(
         sequelize.where(sequelize.literal(haversine), {

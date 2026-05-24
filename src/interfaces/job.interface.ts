@@ -96,6 +96,11 @@ export interface IJobParams {
   id: string;
 }
 
+export interface IGetJobsQuery {
+  page?: string | number;
+  limit?: string | number;
+}
+
 export interface ICancelJobRequest {
   reason?: string;
 }

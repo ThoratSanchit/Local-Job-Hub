@@ -5,6 +5,7 @@ import CustomError from '../utility/customError.utility';
 import {
   ICancelJobRequest,
   ICreateJobRequest,
+  IGetJobsQuery,
   IJobParams,
   IUpdateJobRequest,
 } from '../interfaces/job.interface';
@@ -36,15 +37,18 @@ class JobController {
     }
   }
 
-  async getJobs(req: FastifyRequest, reply: FastifyReply) {
+  async getJobs(req: FastifyRequest<{ Querystring: IGetJobsQuery }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;
-      const jobs = await JobService.getJobs(userId);
+      const page = Number(req.query.page || 1);
+      const limit = Number(req.query.limit || 10);
+      const result = await JobService.getJobs(userId, { page, limit });
 
       return reply.code(200).send({
         statusCode: 200,
         message: Messages.JOBS_FETCHED,
-        data: jobs,
+        data: result.jobs,
+        pagination: result.pagination,
       });
     } catch (err) {
       if (err instanceof CustomError) {
