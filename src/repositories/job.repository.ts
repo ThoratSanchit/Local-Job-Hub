@@ -9,25 +9,27 @@ class JobRepository {
 
   findById(id: string) {
     return Job.findByPk(id, {
-      include: [{ 
-        model: User, 
-        as: 'creator', 
+      include: [{
+        model: User,
+        as: 'creator',
         attributes: [
-          'id', 'name', 'mobile_number', 'profile_photo', 'rating', 
-          'city', 'area', 'is_verified', 'total_jobs_completed', 
+          'id', 'name', 'mobile_number', 'profile_photo', 'rating',
+          'city', 'area', 'is_verified', 'total_jobs_completed',
           'completion_rate', 'availability_status', 'last_seen', 'gender'
-        ] 
+        ]
       }],
     });
   }
 
-  findAll() {
-    return Job.findAll({
+  findAll(pagination?: { limit: number; offset: number }) {
+    return Job.findAndCountAll({
       include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'rating'] }],
       order: [
         ['urgent', 'DESC'],
         ['createdAt', 'DESC'],
       ],
+      limit: pagination?.limit,
+      offset: pagination?.offset,
     });
   }
 
