@@ -1,6 +1,7 @@
 import JobRepository from '../repositories/job.repository';
 import UserRepository from '../repositories/user.repository';
 import JobResponseRepository from '../repositories/jobResponse.repository';
+import RecentSearchRepository from '../repositories/recentSearch.repository';
 import User from '../models/user.model';
 import { JobStatus } from '../constants/job.constants';
 import { NotificationType } from '../constants/notification.constants';
@@ -223,7 +224,19 @@ class JobService {
     return JobResponseRepository.findByWorkerAll(userId);
   }
 
+  async getRecentSearches(userId: string) {
+    const searches = await RecentSearchRepository.findByUser(userId);
+
+    return searches.map((search) => ({
+      id: search.id,
+      search_data: search.search_data,
+      createdAt: search.createdAt,
+    }));
+  }
+
   async searchJobs(userId: string, data: any) {
+    await RecentSearchRepository.saveLatest(userId, data);
+
     const filters: any = {
       created_by: { [Op.ne]: userId },
       status: JobStatus.OPEN,
