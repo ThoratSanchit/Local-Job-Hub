@@ -235,7 +235,9 @@ class JobService {
   }
 
   async searchJobs(userId: string, data: any) {
-    await RecentSearchRepository.saveLatest(userId, data);
+    if (data.keyword) {
+      await RecentSearchRepository.saveLatest(userId, data.keyword);
+    }
 
     const filters: any = {
       created_by: { [Op.ne]: userId },

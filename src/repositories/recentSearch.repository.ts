@@ -4,7 +4,7 @@ import RecentSearch from '../models/recentSearch.model';
 const MAX_RECENT_SEARCHES = 5;
 
 class RecentSearchRepository {
-  async saveLatest(userId: string, searchData: object) {
+  async saveLatest(userId: string, searchData: string) {
     await RecentSearch.create({
       user_id: userId,
       search_data: searchData,
