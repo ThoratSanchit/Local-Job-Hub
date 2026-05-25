@@ -99,7 +99,7 @@ class JobService {
     const page = Math.max(1, Number(query.page) || 1);
     const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
     const offset = (page - 1) * limit;
-    const { count, rows } = await JobRepository.findAll({ limit, offset });
+    const { count, rows } = await JobRepository.findAll(userId, { limit, offset });
 
     return {
       jobs: rows,

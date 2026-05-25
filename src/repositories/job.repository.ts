@@ -1,6 +1,7 @@
 import Job from '../models/job.model';
 import User from '../models/user.model';
 import { ICreateJobData, IJobUpdateData, IUpdateJobData } from '../interfaces/job.interface';
+import { Op } from 'sequelize';
 
 class JobRepository {
   create(data: ICreateJobData) {
@@ -21,8 +22,9 @@ class JobRepository {
     });
   }
 
-  findAll(pagination?: { limit: number; offset: number }) {
+  findAll(userId?: string, pagination?: { limit: number; offset: number }) {
     return Job.findAndCountAll({
+      where: userId ? { created_by: { [Op.ne]: userId } } : undefined,
       include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'rating'] }],
       order: [
         ['urgent', 'DESC'],
