@@ -51,7 +51,7 @@ class MessageService {
     const creatorId = j.created_by;
     const workerId = senderId === creatorId ? receiverId : senderId;
 
-    let conversation = await ConversationRepository.findByJobAndParticipants(jobId, creatorId, workerId);
+    let conversation = await ConversationRepository.findByParticipants(creatorId, workerId);
 
     if (!conversation) {
       conversation = await ConversationRepository.create({
@@ -60,7 +60,7 @@ class MessageService {
         worker_id: workerId
       });
     } else {
-      await ConversationRepository.updateLastMessage((conversation as any).id);
+      await ConversationRepository.updateConversationContext((conversation as any).id, jobId, creatorId, workerId);
     }
 
     const msg = await MessageRepository.create({

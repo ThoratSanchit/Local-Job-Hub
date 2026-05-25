@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import multipart from '@fastify/multipart';
+import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 import { initializeSequelize, checkDatabaseConnection, sequelize } from './config/instance';
 import { setupAssociations } from './models/associations';
@@ -9,6 +10,11 @@ import { registerRoutes } from './routes/index';
 dotenv.config();
 
 const fastify = Fastify({ logger: true });
+
+fastify.register(cors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+});
 
 fastify.register(multipart, {
   limits: {

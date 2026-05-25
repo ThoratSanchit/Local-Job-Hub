@@ -17,8 +17,28 @@ class NotificationController {
   async markRead(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
     try {
       const userId = (req as any).user.id;
-      await NotificationRepository.markRead(req.params.id, userId);
-      return reply.code(200).send({ message: Messages.NOTIFICATION_MARKED_READ });
+      const { id } = req.params;
+      await NotificationRepository.markRead(id, userId);
+
+      const updatedNotification = await NotificationRepository.findByIdAndUser(id, userId);
+      return reply.code(200).send({ 
+        message: Messages.NOTIFICATION_MARKED_READ, 
+        data: updatedNotification 
+      });
+    } catch (err) {
+      req.log.error(err);
+      return reply.code(500).send({ message: Messages.INTERNAL_SERVER_ERROR });
+    }
+  }
+
+  async getUnreadCount(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const userId = (req as any).user.id;
+      const count = await NotificationRepository.getUnreadCount(userId);
+      return reply.code(200).send({ 
+        message: 'Unread notifications count fetched successfully', 
+        data: { count } 
+      });
     } catch (err) {
       req.log.error(err);
       return reply.code(500).send({ message: Messages.INTERNAL_SERVER_ERROR });
