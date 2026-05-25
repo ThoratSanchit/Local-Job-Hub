@@ -1,20 +1,37 @@
 import { cloudinary } from '../config/cloudinary';
+import { Readable } from 'stream';
 
 export const uploadProfilePhoto = (buffer: Buffer): Promise<string> => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: 'local-job-hub/profile-photos', resource_type: 'image' },
+      {
+        folder: 'local-job-hub/profile-photos',
+        resource_type: 'image',
+        // No eager transformation — upload fast, transform on-the-fly via URL
+      },
       (error, result) => {
         if (error || !result) {
           reject(error || new Error('Profile photo upload failed'));
           return;
         }
-
-        resolve(result.secure_url);
+        // Return URL with on-the-fly transformation (no upload delay)
+        const optimizedUrl = cloudinary.url(result.public_id, {
+          width: 400,
+          height: 400,
+          crop: 'fill',
+          gravity: 'face',
+          quality: 'auto',
+          fetch_format: 'auto',
+          secure: true,
+        });
+        resolve(optimizedUrl);
       }
     );
 
-    uploadStream.end(buffer);
+    const readable = new Readable();
+    readable.push(buffer);
+    readable.push(null);
+    readable.pipe(uploadStream);
   });
 };
 

@@ -10,7 +10,11 @@ dotenv.config();
 
 const fastify = Fastify({ logger: true });
 
-fastify.register(multipart);
+fastify.register(multipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max
+  },
+});
 
 fastify.setErrorHandler((error, request, reply) => {
   if (error.validation) {
