@@ -36,6 +36,7 @@ class Messages {
   static readonly JOBS_FETCHED = 'Jobs fetched successfully';
   static readonly RECENT_SEARCHES_FETCHED = 'Recent searches fetched successfully';
   static readonly JOB_NOT_FOUND = 'Job not found';
+  static readonly INVALID_CURSOR = 'Invalid cursor';
   static readonly JOB_CANCELLED = 'Job cancelled successfully';
   static readonly JOB_COMPLETED = 'Job marked as completed';
   static readonly JOB_EXPIRED = 'Job has expired';

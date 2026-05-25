@@ -1,7 +1,8 @@
 import Job from '../models/job.model';
 import User from '../models/user.model';
 import { ICreateJobData, IJobUpdateData, IUpdateJobData } from '../interfaces/job.interface';
-import { Op } from 'sequelize';
+import { Op, WhereOptions } from 'sequelize';
+import { IJobCursor } from '../utility/jobCursor.utility';
 
 class JobRepository {
   create(data: ICreateJobData) {
@@ -22,16 +23,41 @@ class JobRepository {
     });
   }
 
-  findAll(userId?: string, pagination?: { limit: number; offset: number }) {
-    return Job.findAndCountAll({
-      where: userId ? { created_by: { [Op.ne]: userId } } : undefined,
+  findAll(userId?: string, pagination?: { limit: number; cursor?: IJobCursor }) {
+    const conditions: WhereOptions[] = [];
+
+    if (userId) {
+      conditions.push({ created_by: { [Op.ne]: userId } });
+    }
+
+    if (pagination?.cursor) {
+      const { urgent, createdAt, id } = pagination.cursor;
+
+      conditions.push({
+        [Op.or]: [
+          { urgent: { [Op.lt]: urgent } },
+          {
+            urgent,
+            createdAt: { [Op.lt]: createdAt },
+          },
+          {
+            urgent,
+            createdAt,
+            id: { [Op.lt]: id },
+          },
+        ],
+      });
+    }
+
+    return Job.findAll({
+      where: conditions.length ? { [Op.and]: conditions } : undefined,
       include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'rating'] }],
       order: [
         ['urgent', 'DESC'],
         ['createdAt', 'DESC'],
+        ['id', 'DESC'],
       ],
       limit: pagination?.limit,
-      offset: pagination?.offset,
     });
   }
 
