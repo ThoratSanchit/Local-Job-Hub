@@ -7,6 +7,7 @@ import { JobStatus } from '../constants/job.constants';
 import { NotificationType } from '../constants/notification.constants';
 import { notify, notifyMany } from '../utility/notification.utility';
 import CustomError from '../utility/customError.utility';
+import { decodeJobCursor, encodeJobCursor } from '../utility/jobCursor.utility';
 import Messages from '../language/en/message.language';
 import {
   ICreateJobRequest,
@@ -95,19 +96,22 @@ class JobService {
     return job;
   }
 
-  async getJobs(userId: string, query: Required<IGetJobsQuery>) {
-    const page = Math.max(1, Number(query.page) || 1);
+  async getJobs(userId: string, query: IGetJobsQuery) {
     const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
-    const offset = (page - 1) * limit;
-    const { count, rows } = await JobRepository.findAll(userId, { limit, offset });
+    const rows = await JobRepository.findAll(userId, {
+      limit: limit + 1,
+      cursor: decodeJobCursor(query.cursor),
+    });
+    const hasNextPage = rows.length > limit;
+    const jobs = hasNextPage ? rows.slice(0, limit) : rows;
+    const lastJob = jobs[jobs.length - 1];
 
     return {
-      jobs: rows,
+      jobs,
       pagination: {
-        total: count,
-        page,
         limit,
-        totalPages: Math.ceil(count / limit),
+        nextCursor: hasNextPage && lastJob ? encodeJobCursor(lastJob) : null,
+        hasNextPage,
       },
     };
   }

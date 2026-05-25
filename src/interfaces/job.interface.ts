@@ -97,8 +97,8 @@ export interface IJobParams {
 }
 
 export interface IGetJobsQuery {
-  page?: string | number;
   limit?: string | number;
+  cursor?: string;
 }
 
 export interface ICancelJobRequest {
