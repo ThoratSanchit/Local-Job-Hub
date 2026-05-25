@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/aws-lambda": "^6.4.0",
+    "@fastify/cors": "^8.5.0",
     "@fastify/multipart": "^7.7.3",
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",

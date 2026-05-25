@@ -5,6 +5,7 @@ import { verifyToken } from '../middlewares/verifyToken';
 const notificationRoutes: FastifyPluginAsync = async (fastify: FastifyInstance, _options: FastifyPluginOptions) => {
   fastify.addHook('preHandler', verifyToken);
   fastify.get('/', NotificationController.getNotifications);
+  fastify.get('/unread-count', NotificationController.getUnreadCount);
   fastify.patch('/:id/read', NotificationController.markRead);
 };
 

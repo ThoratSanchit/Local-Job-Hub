@@ -8,9 +8,14 @@ class ConversationRepository {
     return Conversation.create(data as any);
   }
 
-  findByJobAndParticipants(job_id: string, creator_id: string, worker_id: string) {
+  findByParticipants(creator_id: string, worker_id: string) {
     return Conversation.findOne({
-      where: { job_id, creator_id, worker_id }
+      where: {
+        [Op.or]: [
+          { creator_id, worker_id },
+          { creator_id: worker_id, worker_id: creator_id }
+        ]
+      }
     });
   }
 
@@ -38,8 +43,16 @@ class ConversationRepository {
     });
   }
 
-  updateLastMessage(id: string, timestamp: Date = new Date()) {
-    return Conversation.update({ last_message_at: timestamp }, { where: { id } });
+  updateConversationContext(id: string, jobId: string, creatorId: string, workerId: string, timestamp: Date = new Date()) {
+    return Conversation.update(
+      {
+        last_message_at: timestamp,
+        job_id: jobId,
+        creator_id: creatorId,
+        worker_id: workerId
+      },
+      { where: { id } }
+    );
   }
 }
 
