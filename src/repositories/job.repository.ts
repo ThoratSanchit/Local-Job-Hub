@@ -23,11 +23,17 @@ class JobRepository {
     });
   }
 
-  findAll(userId?: string, pagination?: { limit: number; cursor?: IJobCursor }) {
+  findAll(userId?: string, pagination?: { limit: number; cursor?: IJobCursor; search?: string }) {
     const conditions: WhereOptions[] = [];
 
     if (userId) {
       conditions.push({ created_by: { [Op.ne]: userId } });
+    }
+
+    if (pagination?.search) {
+      conditions.push({
+        title: { [Op.like]: `%${pagination.search}%` },
+      });
     }
 
     if (pagination?.cursor) {

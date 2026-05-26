@@ -5,7 +5,7 @@ import { ICreateRecentSearchData, IRecentSearch } from '../interfaces/recentSear
 class RecentSearch extends Model<IRecentSearch, ICreateRecentSearchData> implements IRecentSearch {
   public id!: string;
   public user_id!: string;
-  public search_data!: string;
+  public search_key!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -21,7 +21,7 @@ RecentSearch.init(
       type: DataTypes.UUID,
       allowNull: false,
     },
-    search_data: {
+    search_key: {
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -4,38 +4,58 @@ import RecentSearch from '../models/recentSearch.model';
 const MAX_RECENT_SEARCHES = 5;
 
 class RecentSearchRepository {
-  async saveLatest(userId: string, searchData: string) {
-    await RecentSearch.create({
-      user_id: userId,
-      search_data: searchData,
+  async saveLatest(userId: string, keyword: string): Promise<void> {
+    const normalized = keyword.trim().toLowerCase();
+    if (!normalized) return;
+
+    const existing = await RecentSearch.findOne({
+      where: { user_id: userId, search_key: normalized },
     });
 
-    await this.removeOldSearches(userId);
+    if (existing) {
+      await RecentSearch.update(
+        { search_key: normalized },
+        { where: { id: existing.id } }
+      );
+    } else {
+      await RecentSearch.create({
+        user_id: userId,
+        search_key: normalized,
+      });
+
+      await this.removeOldSearches(userId);
+    }
   }
 
   findByUser(userId: string) {
     return RecentSearch.findAll({
       where: { user_id: userId },
-      order: [['createdAt', 'DESC']],
+      order: [['updatedAt', 'DESC']],
       limit: MAX_RECENT_SEARCHES,
     });
+  }
+
+  deleteOne(id: string, userId: string) {
+    return RecentSearch.destroy({ where: { id, user_id: userId } });
+  }
+
+  deleteAll(userId: string) {
+    return RecentSearch.destroy({ where: { user_id: userId } });
   }
 
   private async removeOldSearches(userId: string) {
     const oldSearches = await RecentSearch.findAll({
       where: { user_id: userId },
       attributes: ['id'],
-      order: [['createdAt', 'DESC']],
+      order: [['updatedAt', 'DESC']],
       offset: MAX_RECENT_SEARCHES,
     });
 
-    const oldSearchIds = oldSearches.map((search) => search.id);
-    if (!oldSearchIds.length) return;
+    const oldIds = oldSearches.map((s) => s.id);
+    if (!oldIds.length) return;
 
     await RecentSearch.destroy({
-      where: {
-        id: { [Op.in]: oldSearchIds },
-      },
+      where: { id: { [Op.in]: oldIds } },
     });
   }
 }

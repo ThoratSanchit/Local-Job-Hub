@@ -5,6 +5,7 @@ import jobRoutes from './job.route';
 import messageRoutes from './message.route';
 import reviewRoutes from './review.route';
 import notificationRoutes from './notification.route';
+import recentSearchRoutes from './recentSearch.route';
 
 export const registerRoutes = async (fastify: FastifyInstance) => {
   fastify.register(authRoutes, { prefix: '/api/auth' });
@@ -13,4 +14,5 @@ export const registerRoutes = async (fastify: FastifyInstance) => {
   fastify.register(messageRoutes, { prefix: '/api/messages' });
   fastify.register(reviewRoutes, { prefix: '/api/jobs' });  // Same prefix as jobs
   fastify.register(notificationRoutes, { prefix: '/api/notifications' });
+  fastify.register(recentSearchRoutes, { prefix: '/api/recent-searches' });
 };

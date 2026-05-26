@@ -80,32 +80,22 @@ export const getJobsSchema = {
     properties: {
       limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
       cursor: { type: 'string', minLength: 1 },
+      search: { type: 'string', minLength: 1 },
     },
     additionalProperties: false,
   },
 };
 
-export const searchJobSchema = {
+export const filterJobSchema = {
   body: {
     type: 'object',
     properties: {
-      keyword: { type: 'string' },
-      category: {
-        anyOf: [
-          { type: 'string' },
-          { type: 'array', items: { type: 'string' } },
-        ],
-      },
+      category: { type: 'string' },
       city: { type: 'string' },
       area: { type: 'string' },
       minSalary: { type: 'number' },
       maxSalary: { type: 'number' },
-      workDuration: {
-        anyOf: [
-          { type: 'string' },
-          { type: 'array', items: { type: 'string' } },
-        ],
-      },
+      workDuration: { type: 'string' },
       isUrgent: { type: 'boolean' },
       isNew: { type: 'boolean' },
       distance: { type: 'number' },

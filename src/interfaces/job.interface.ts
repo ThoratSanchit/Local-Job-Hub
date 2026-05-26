@@ -99,6 +99,21 @@ export interface IJobParams {
 export interface IGetJobsQuery {
   limit?: string | number;
   cursor?: string;
+  search?: string;
+}
+
+export interface IFilterJobsQuery {
+  category?: string;
+  city?: string;
+  area?: string;
+  minSalary?: number;
+  maxSalary?: number;
+  workDuration?: string;
+  isUrgent?: boolean;
+  isNew?: boolean;
+  distance?: number;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface ICancelJobRequest {
