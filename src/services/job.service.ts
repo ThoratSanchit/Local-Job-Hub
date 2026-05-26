@@ -11,6 +11,7 @@ import { decodeJobCursor, encodeJobCursor } from '../utility/jobCursor.utility';
 import Messages from '../language/en/message.language';
 import {
   ICreateJobRequest,
+  IFilterJobsQuery,
   IGetJobsQuery,
   IJobUpdateData,
   IUpdateJobData,
@@ -97,10 +98,15 @@ class JobService {
   }
 
   async getJobs(userId: string, query: IGetJobsQuery) {
+    if (query.search) {
+      RecentSearchRepository.saveLatest(userId, query.search).catch(() => {});
+    }
+
     const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
     const rows = await JobRepository.findAll(userId, {
       limit: limit + 1,
       cursor: decodeJobCursor(query.cursor),
+      search: query.search,
     });
     const hasNextPage = rows.length > limit;
     const jobs = hasNextPage ? rows.slice(0, limit) : rows;
@@ -114,6 +120,60 @@ class JobService {
         hasNextPage,
       },
     };
+  }
+
+  async filterJobs(userId: string, query: IFilterJobsQuery) {
+    const filters: any = {
+      created_by: { [Op.ne]: userId },
+      status: JobStatus.OPEN,
+    };
+
+    if (query.category) {
+      filters.category = query.category;
+    }
+
+    if (query.city) filters.city = query.city;
+    if (query.area) filters.area = query.area;
+
+    if (query.minSalary !== undefined || query.maxSalary !== undefined) {
+      filters.price = {};
+      if (query.minSalary !== undefined) filters.price[Op.gte] = query.minSalary;
+      if (query.maxSalary !== undefined) filters.price[Op.lte] = query.maxSalary;
+    }
+
+    if (query.workDuration) {
+      filters.work_duration = query.workDuration;
+    }
+
+    if (query.isUrgent) {
+      filters.urgent = true;
+    }
+
+    if (query.isNew) {
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      filters.createdAt = { [Op.gte]: threeDaysAgo };
+    }
+
+    if (query.distance !== undefined && query.latitude !== undefined && query.longitude !== undefined) {
+      const haversine = `(
+        6371 * acos(
+          cos(radians(${query.latitude}))
+          * cos(radians(latitude))
+          * cos(radians(longitude) - radians(${query.longitude}))
+          + sin(radians(${query.latitude})) * sin(radians(latitude))
+        )
+      )`;
+
+      filters[Op.and] = filters[Op.and] || [];
+      filters[Op.and].push(
+        sequelize.where(sequelize.literal(haversine), {
+          [Op.lte]: query.distance,
+        })
+      );
+    }
+
+    return JobRepository.searchJobs(userId, filters);
   }
 
   async getJobById(jobId: string) {
@@ -233,7 +293,7 @@ class JobService {
 
     return searches.map((search) => ({
       id: search.id,
-      search_data: search.search_data,
+      search_key: search.search_key,
       createdAt: search.createdAt,
     }));
   }

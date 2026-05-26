@@ -5,6 +5,7 @@ import CustomError from '../utility/customError.utility';
 import {
   ICancelJobRequest,
   ICreateJobRequest,
+  IFilterJobsQuery,
   IGetJobsQuery,
   IJobParams,
   IUpdateJobRequest,
@@ -44,6 +45,7 @@ class JobController {
       const result = await JobService.getJobs(userId, {
         limit,
         cursor: req.query.cursor,
+        search: req.query.search,
       });
 
       return reply.code(200).send({
@@ -230,6 +232,32 @@ class JobController {
         statusCode: 200,
         message: Messages.JOBS_FETCHED,
         data: applications,
+      });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
+      req.log.error(err);
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
+    }
+  }
+
+  async filterJobs(req: FastifyRequest<{ Body: IFilterJobsQuery }>, reply: FastifyReply) {
+    try {
+      const userId = (req as any).user.id;
+      const jobs = await JobService.filterJobs(userId, req.body);
+
+      return reply.code(200).send({
+        statusCode: 200,
+        message: Messages.JOBS_FETCHED,
+        data: jobs,
       });
     } catch (err) {
       if (err instanceof CustomError) {
