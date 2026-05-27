@@ -8,6 +8,7 @@ class User extends Model {
   public name!: string;
   public mobile_number!: string;
   public gender!: Gender;
+  public age!: number;
   public city!: string;
   public area!: string;
   public profile_photo!: string | null;
@@ -38,6 +39,10 @@ User.init(
     },
     gender: {
       type: DataTypes.ENUM(...Object.values(Gender)),
+      allowNull: false,
+    },
+    age: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     city: {
