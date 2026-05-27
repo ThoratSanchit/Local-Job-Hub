@@ -26,6 +26,10 @@ class JobResponseRepository {
     return JobResponse.count({ where: { job_id, status: ResponseStatus.ACCEPTED } });
   }
 
+  countByJob(job_id: string) {
+    return JobResponse.count({ where: { job_id } });
+  }
+
   rejectAllPending(job_id: string) {
     return JobResponse.update(
       { status: ResponseStatus.REJECTED },

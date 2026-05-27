@@ -27,10 +27,14 @@ class JobService {
       description,
       category,
       price,
+      min_price,
+      max_price,
       payment_type,
       work_duration,
       start_date,
       preferred_time,
+      preferred_time_from,
+      preferred_time_to,
       full_address,
       latitude,
       longitude,
@@ -56,10 +60,14 @@ class JobService {
       description,
       category,
       price,
+      min_price: min_price ?? null,
+      max_price: max_price ?? null,
       payment_type: payment_type || null,
       work_duration: work_duration || null,
       start_date: start_date || null,
       preferred_time: preferred_time || null,
+      preferred_time_from: preferred_time_from || null,
+      preferred_time_to: preferred_time_to || null,
       full_address: full_address || null,
       latitude: latitude ?? null,
       longitude: longitude ?? null,
@@ -177,13 +185,16 @@ class JobService {
   }
 
   async getJobById(jobId: string) {
-    const job = await JobRepository.findById(jobId);
+    const [job, application_count] = await Promise.all([
+      JobRepository.findById(jobId),
+      JobResponseRepository.countByJob(jobId),
+    ]);
 
     if (!job) {
       throw new CustomError(404, Messages.JOB_NOT_FOUND);
     }
 
-    return job;
+    return { ...job.toJSON(), application_count };
   }
 
   async updateJob(userId: string, jobId: string, data: IUpdateJobRequest) {
