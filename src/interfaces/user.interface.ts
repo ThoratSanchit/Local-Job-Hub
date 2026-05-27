@@ -6,6 +6,7 @@ export interface IUser {
   name: string;
   mobile_number: string;
   gender: Gender;
+  age: number;
   city: string;
   area: string;
   rating: number;
@@ -20,6 +21,7 @@ export interface ICreateUser {
   name: string;
   mobile_number: string;
   gender: Gender;
+  age: number;
   city: string;
   area: string;
   is_onboarded?: boolean;
@@ -29,6 +31,7 @@ export interface IUpdateUser {
   name?: string;
   mobile_number?: string;
   gender?: Gender;
+  age?: number;
   city?: string;
   area?: string;
   rating?: number;
