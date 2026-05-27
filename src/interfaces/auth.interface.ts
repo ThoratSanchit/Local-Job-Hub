@@ -4,6 +4,7 @@ export interface ISignupRequest {
   name: string;
   mobile_number: string;
   gender: Gender;
+  age: number;
   city: string;
   area: string;
   profile_photo?: string;
@@ -25,6 +26,7 @@ export interface IAuthResult {
     name: string;
     mobile_number: string;
     gender: Gender;
+    age: number;
     profile_photo: string | null;
   };
 }
