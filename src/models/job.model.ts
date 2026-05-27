@@ -9,10 +9,14 @@ class Job extends Model<IJob, ICreateJobData> implements IJob {
   public description!: string;
   public category!: string;
   public price!: number;
+  public min_price!: number | null;
+  public max_price!: number | null;
   public payment_type!: string | null;
   public work_duration!: string | null;
   public start_date!: string | null;
   public preferred_time!: string | null;
+  public preferred_time_from!: string | null;
+  public preferred_time_to!: string | null;
   public full_address!: string | null;
   public latitude!: number | null;
   public longitude!: number | null;
@@ -54,6 +58,16 @@ Job.init(
       type: DataTypes.FLOAT,
       allowNull: false
     },
+    min_price: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+      defaultValue: null,
+    },
+    max_price: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+      defaultValue: null,
+    },
     payment_type: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -70,6 +84,16 @@ Job.init(
       defaultValue: null,
     },
     preferred_time: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    preferred_time_from: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    preferred_time_to: {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: null,
