@@ -36,6 +36,9 @@ class AuthService {
         mobile_number: user.mobile_number,
         gender: user.gender,
         age: user.age,
+        city: user.city,
+        area: user.area,
+        pincode: user.pincode,
         profile_photo: user.profile_photo,
       },
     };
@@ -81,7 +84,7 @@ class AuthService {
   }
 
   async signup(data: ISignupRequest): Promise<IAuthResult> {
-    const { name, gender, age, city, area, profile_photo } = data;
+    const { name, gender, age, city, area, pincode, profile_photo } = data;
     const mobile_number = normalizeMobileNumber(data.mobile_number);
     validateMobileNumber(mobile_number);
 
@@ -103,8 +106,9 @@ class AuthService {
       mobile_number,
       gender,
       age,
-      city,
-      area,
+      city: city ?? null,
+      area: area ?? null,
+      pincode: pincode ?? null,
       profile_photo: profile_photo || null,
       is_verified: true,
     });

@@ -71,8 +71,8 @@ class JobService {
       full_address: full_address || null,
       latitude: latitude ?? null,
       longitude: longitude ?? null,
-      city: city || creator.city,
-      area: area || creator.area,
+      city: city !== undefined ? city : creator.city,
+      area: area !== undefined ? area : creator.area,
       created_by: userId,
       workers_required: workers_required || 1,
       urgent: !!urgent,
@@ -107,7 +107,7 @@ class JobService {
 
   async getJobs(userId: string, query: IGetJobsQuery) {
     if (query.search) {
-      RecentSearchRepository.saveLatest(userId, query.search).catch(() => {});
+      RecentSearchRepository.saveLatest(userId, query.search).catch(() => { });
     }
 
     const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
