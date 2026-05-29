@@ -9,8 +9,9 @@ class User extends Model {
   public mobile_number!: string;
   public gender!: Gender;
   public age!: number;
-  public city!: string;
-  public area!: string;
+  public city!: string | null;
+  public area!: string | null;
+  public pincode!: string | null;
   public profile_photo!: string | null;
   public rating!: number;
   public total_jobs_completed!: number;
@@ -47,11 +48,15 @@ User.init(
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     area: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
+    },
+    pincode: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     profile_photo: {
       type: DataTypes.STRING,

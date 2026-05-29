@@ -10,11 +10,12 @@ class UserController {
     try {
       const userId = (req as any).user.id;
       const user = await UserService.getMe(userId);
+      const { gender, ...userWithoutGender } = user.toJSON();
 
       return reply.code(200).send({
         statusCode: 200,
         message: Messages.USER_FETCHED_SUCCESSFULLY,
-        data: user,
+        data: userWithoutGender,
       });
     } catch (err) {
       if (err instanceof CustomError) {

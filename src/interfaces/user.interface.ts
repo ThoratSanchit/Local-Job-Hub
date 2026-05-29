@@ -7,8 +7,9 @@ export interface IUser {
   mobile_number: string;
   gender: Gender;
   age: number;
-  city: string;
-  area: string;
+  city: string | null;
+  area: string | null;
+  pincode: string | null;
   rating: number;
   total_jobs_completed: number;
   completion_rate: number;
@@ -22,8 +23,9 @@ export interface ICreateUser {
   mobile_number: string;
   gender: Gender;
   age: number;
-  city: string;
-  area: string;
+  city?: string | null;
+  area?: string | null;
+  pincode?: string | null;
   is_onboarded?: boolean;
 }
 
@@ -32,8 +34,9 @@ export interface IUpdateUser {
   mobile_number?: string;
   gender?: Gender;
   age?: number;
-  city?: string;
-  area?: string;
+  city?: string | null;
+  area?: string | null;
+  pincode?: string | null;
   rating?: number;
   total_jobs_completed?: number;
   completion_rate?: number;
