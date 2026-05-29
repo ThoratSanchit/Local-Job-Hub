@@ -5,6 +5,16 @@ import Messages from '../language/en/message.language';
 import CustomError from '../utility/customError.utility';
 
 class UserService {
+  private validateSkills(skills: IUpdateUser['skills']) {
+    if (
+      skills !== undefined &&
+      skills !== null &&
+      (!Array.isArray(skills) || skills.some((skill) => typeof skill !== 'string'))
+    ) {
+      throw new CustomError(400, Messages.INVALID_SKILLS);
+    }
+  }
+
   async getMe(userId: string) {
     const user = await UserRepository.findById(userId);
 
@@ -26,6 +36,8 @@ class UserService {
   }
 
   async updateProfile(userId: string, data: IUpdateUser) {
+    this.validateSkills(data.skills);
+
     await UserRepository.updateProfile(userId, data);
     return this.getMe(userId);
   }

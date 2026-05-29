@@ -13,6 +13,8 @@ class User extends Model {
   public area!: string | null;
   public pincode!: string | null;
   public profile_photo!: string | null;
+  public about_me!: string | null;
+  public skills!: string[] | null;
   public rating!: number;
   public total_jobs_completed!: number;
   public completion_rate!: number;
@@ -60,6 +62,14 @@ User.init(
     },
     profile_photo: {
       type: DataTypes.STRING,
+      allowNull: true
+    },
+    about_me: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    skills: {
+      type: DataTypes.JSON,
       allowNull: true
     },
     rating: {

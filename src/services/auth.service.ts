@@ -24,6 +24,16 @@ const validateMobileNumber = (mobile_number: string) => {
   }
 };
 
+const validateSkills = (skills?: string[] | null) => {
+  if (
+    skills !== undefined &&
+    skills !== null &&
+    (!Array.isArray(skills) || skills.some((skill) => typeof skill !== 'string'))
+  ) {
+    throw new CustomError(400, Messages.INVALID_SKILLS);
+  }
+};
+
 class AuthService {
   private buildAuthResult(user: any): IAuthResult {
     const token = signToken({ id: user.id, mobile_number: user.mobile_number });
@@ -40,6 +50,8 @@ class AuthService {
         area: user.area,
         pincode: user.pincode,
         profile_photo: user.profile_photo,
+        about_me: user.about_me,
+        skills: user.skills,
       },
     };
   }
@@ -84,7 +96,7 @@ class AuthService {
   }
 
   async signup(data: ISignupRequest): Promise<IAuthResult> {
-    const { name, gender, age, city, area, pincode, profile_photo } = data;
+    const { name, gender, age, city, area, pincode, profile_photo, about_me, skills } = data;
     const mobile_number = normalizeMobileNumber(data.mobile_number);
     validateMobileNumber(mobile_number);
 
@@ -95,6 +107,8 @@ class AuthService {
     if (!Object.values(Gender).includes(gender)) {
       throw new CustomError(400, Messages.INVALID_GENDER);
     }
+
+    validateSkills(skills);
 
     const existing = await UserRepository.findByMobile(mobile_number);
     if (existing) {
@@ -110,6 +124,8 @@ class AuthService {
       area: area ?? null,
       pincode: pincode ?? null,
       profile_photo: profile_photo || null,
+      about_me: about_me ?? null,
+      skills: skills ?? null,
       is_verified: true,
     });
 
