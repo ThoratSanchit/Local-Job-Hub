@@ -103,7 +103,13 @@ Authorization: Bearer <token>
 
 **Update profile body:**
 ```json
-{ "name": "Jane", "city": "Delhi", "area": "Saket" }
+{
+  "name": "Jane",
+  "city": "Delhi",
+  "area": "Saket",
+  "about_me": "I provide reliable home maintenance and local services.",
+  "skills": ["General Help", "Local Service", "Home Maintenance"]
+}
 ```
 
 **Toggle availability body:**

@@ -9,6 +9,8 @@ export interface ISignupRequest {
   area?: string | null;
   pincode?: string | null;
   profile_photo?: string;
+  about_me?: string | null;
+  skills?: string[] | null;
 }
 
 export interface IOtpRequest {
@@ -32,6 +34,8 @@ export interface IAuthResult {
     area: string | null;
     pincode: string | null;
     profile_photo: string | null;
+    about_me: string | null;
+    skills: string[] | null;
   };
 }
 

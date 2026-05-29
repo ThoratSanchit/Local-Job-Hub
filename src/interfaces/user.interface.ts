@@ -10,6 +10,9 @@ export interface IUser {
   city: string | null;
   area: string | null;
   pincode: string | null;
+  profile_photo: string | null;
+  about_me: string | null;
+  skills: string[] | null;
   rating: number;
   total_jobs_completed: number;
   completion_rate: number;
@@ -26,6 +29,9 @@ export interface ICreateUser {
   city?: string | null;
   area?: string | null;
   pincode?: string | null;
+  profile_photo?: string | null;
+  about_me?: string | null;
+  skills?: string[] | null;
   is_onboarded?: boolean;
 }
 
@@ -37,6 +43,9 @@ export interface IUpdateUser {
   city?: string | null;
   area?: string | null;
   pincode?: string | null;
+  profile_photo?: string | null;
+  about_me?: string | null;
+  skills?: string[] | null;
   rating?: number;
   total_jobs_completed?: number;
   completion_rate?: number;
