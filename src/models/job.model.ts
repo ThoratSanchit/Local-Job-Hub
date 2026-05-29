@@ -20,8 +20,8 @@ class Job extends Model<IJob, ICreateJobData> implements IJob {
   public full_address!: string | null;
   public latitude!: number | null;
   public longitude!: number | null;
-  public city!: string;
-  public area!: string;
+  public city!: string | null;
+  public area!: string | null;
   public created_by!: string;
   public workers_required!: number;
   public status!: JobStatus;
@@ -115,11 +115,13 @@ Job.init(
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
+      defaultValue: null,
     },
     area: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
+      defaultValue: null,
     },
     created_by: {
       type: DataTypes.UUID,

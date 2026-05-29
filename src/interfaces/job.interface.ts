@@ -17,8 +17,8 @@ export interface IJob {
   full_address: string | null;
   latitude: number | null;
   longitude: number | null;
-  city: string;
-  area: string;
+  city: string | null;
+  area: string | null;
   created_by: string;
   workers_required: number;
   status: JobStatus;
@@ -45,7 +45,7 @@ export interface ICreateJobRequest {
   preferred_time?: string;
   preferred_time_from?: string;
   preferred_time_to?: string;
-  full_address?: string;
+  full_address?: string | null;
   latitude?: number;
   longitude?: number;
   workers_required?: number;
@@ -53,8 +53,8 @@ export interface ICreateJobRequest {
   expires_at?: string;
   need_workers_immediately?: boolean;
   requirements?: string[];
-  city?: string;
-  area?: string;
+  city?: string | null;
+  area?: string | null;
 }
 export interface ICreateJobData {
   title: string;
@@ -72,8 +72,8 @@ export interface ICreateJobData {
   full_address: string | null;
   latitude: number | null;
   longitude: number | null;
-  city: string;
-  area: string;
+  city: string | null;
+  area: string | null;
   created_by: string;
   workers_required: number;
   status: JobStatus;
@@ -104,8 +104,8 @@ export interface IUpdateJobRequest {
   expires_at?: string | null;
   need_workers_immediately?: boolean;
   requirements?: string[] | null;
-  city?: string;
-  area?: string;
+  city?: string | null;
+  area?: string | null;
 }
 
 export interface IJobParams {
@@ -157,8 +157,8 @@ export interface IUpdateJobData {
   expires_at?: Date | null;
   need_workers_immediately?: boolean;
   requirements?: string[] | null;
-  city?: string;
-  area?: string;
+  city?: string | null;
+  area?: string | null;
 }
 
 export interface IJobUpdateData extends IUpdateJobData {
