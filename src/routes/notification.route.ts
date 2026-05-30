@@ -6,7 +6,7 @@ const notificationRoutes: FastifyPluginAsync = async (fastify: FastifyInstance, 
   fastify.addHook('preHandler', verifyToken);
   fastify.get('/', NotificationController.getNotifications);
   fastify.get('/unread-count', NotificationController.getUnreadCount);
-  fastify.patch('/:id/read', NotificationController.markRead);
+  fastify.put('/:id/read', NotificationController.markRead);
 };
 
 export default notificationRoutes;
