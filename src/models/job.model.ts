@@ -22,6 +22,7 @@ class Job extends Model<IJob, ICreateJobData> implements IJob {
   public longitude!: number | null;
   public city!: string | null;
   public area!: string | null;
+  public pincode!: string | null;
   public created_by!: string;
   public workers_required!: number;
   public status!: JobStatus;
@@ -119,6 +120,11 @@ Job.init(
       defaultValue: null,
     },
     area: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    pincode: {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: null,

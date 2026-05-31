@@ -19,6 +19,7 @@ export interface IJob {
   longitude: number | null;
   city: string | null;
   area: string | null;
+  pincode: string | null;
   created_by: string;
   workers_required: number;
   status: JobStatus;
@@ -55,6 +56,7 @@ export interface ICreateJobRequest {
   requirements?: string[];
   city?: string | null;
   area?: string | null;
+  pincode?: string | null;
 }
 export interface ICreateJobData {
   title: string;
@@ -74,6 +76,7 @@ export interface ICreateJobData {
   longitude: number | null;
   city: string | null;
   area: string | null;
+  pincode: string | null;
   created_by: string;
   workers_required: number;
   status: JobStatus;
@@ -106,6 +109,7 @@ export interface IUpdateJobRequest {
   requirements?: string[] | null;
   city?: string | null;
   area?: string | null;
+  pincode?: string | null;
 }
 
 export interface IJobParams {
@@ -122,6 +126,7 @@ export interface IFilterJobsQuery {
   category?: string;
   city?: string;
   area?: string;
+  pincode?: string;
   minSalary?: number;
   maxSalary?: number;
   workDuration?: string;
@@ -159,6 +164,7 @@ export interface IUpdateJobData {
   requirements?: string[] | null;
   city?: string | null;
   area?: string | null;
+  pincode?: string | null;
 }
 
 export interface IJobUpdateData extends IUpdateJobData {
@@ -172,4 +178,5 @@ export interface ISearchJobRequest {
   category?: string;
   city?: string;
   area?: string;
+  pincode?: string;
 }

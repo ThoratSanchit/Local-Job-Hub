@@ -33,6 +33,7 @@ export const createJobSchema = {
       },
       city: { type: ['string', 'null'], minLength: 1 },
       area: { type: ['string', 'null'], minLength: 1 },
+      pincode: { type: ['string', 'null'], minLength: 1 },
     },
   },
 };
@@ -77,6 +78,7 @@ export const updateJobSchema = {
       },
       city: { type: ['string', 'null'], minLength: 1 },
       area: { type: ['string', 'null'], minLength: 1 },
+      pincode: { type: ['string', 'null'], minLength: 1 },
     },
     additionalProperties: false,
   },
@@ -101,6 +103,7 @@ export const filterJobSchema = {
       category: { type: 'string' },
       city: { type: 'string' },
       area: { type: 'string' },
+      pincode: { type: 'string' },
       minSalary: { type: 'number' },
       maxSalary: { type: 'number' },
       workDuration: { type: 'string' },

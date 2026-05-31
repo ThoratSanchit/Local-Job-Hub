@@ -19,8 +19,61 @@ import {
 } from '../interfaces/job.interface';
 import { Op } from 'sequelize';
 import { sequelize } from '../config/instance';
+import LocationService from './location.service';
 
 class JobService {
+  private async resolveJobLocation(data: ICreateJobRequest, creator: User) {
+    const hasAnyCoordinate = data.latitude !== undefined && data.latitude !== null
+      || data.longitude !== undefined && data.longitude !== null;
+    const hasCoordinatePair = data.latitude !== undefined && data.latitude !== null
+      && data.longitude !== undefined && data.longitude !== null;
+    const hasAnyManualAddress = data.city !== undefined && data.city !== null
+      || data.area !== undefined && data.area !== null
+      || data.pincode !== undefined && data.pincode !== null
+      || data.full_address !== undefined && data.full_address !== null;
+    const hasManualAddress =
+      typeof data.city === 'string' &&
+      typeof data.area === 'string' &&
+      typeof data.pincode === 'string';
+
+    if (hasAnyCoordinate && hasAnyManualAddress) {
+      throw new CustomError(400, Messages.INVALID_JOB_LOCATION_PAYLOAD);
+    }
+
+    if (hasAnyCoordinate) {
+      if (!hasCoordinatePair) {
+        throw new CustomError(400, Messages.INVALID_JOB_LOCATION_PAYLOAD);
+      }
+
+      const location = await LocationService.reverseGeocode(Number(data.latitude), Number(data.longitude));
+
+      return {
+        city: location.city,
+        area: location.area,
+        pincode: location.pincode,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      };
+    }
+
+    if (hasAnyManualAddress) {
+      if (!hasManualAddress) {
+        throw new CustomError(400, Messages.JOB_LOCATION_FIELDS_REQUIRED);
+      }
+
+      const { city, area, pincode } = data as { city: string; area: string; pincode: string };
+      return LocationService.geocodeJobLocation(city, area, pincode, data.full_address);
+    }
+
+    return {
+      city: creator.city,
+      area: creator.area,
+      pincode: creator.pincode,
+      latitude: creator.latitude,
+      longitude: creator.longitude,
+    };
+  }
+
   async createJob(userId: string, data: ICreateJobRequest) {
     const {
       title,
@@ -36,15 +89,11 @@ class JobService {
       preferred_time_from,
       preferred_time_to,
       full_address,
-      latitude,
-      longitude,
       workers_required,
       urgent,
       expires_at,
       need_workers_immediately,
       requirements,
-      city,
-      area,
     } = data;
 
     const creator = await UserRepository.findById(userId);
@@ -54,6 +103,8 @@ class JobService {
     if (expires_at && new Date(expires_at) <= new Date()) {
       throw new CustomError(400, Messages.EXPIRES_AT_MUST_BE_FUTURE);
     }
+
+    const location = await this.resolveJobLocation(data, creator);
 
     const job = await JobRepository.create({
       title,
@@ -69,10 +120,11 @@ class JobService {
       preferred_time_from: preferred_time_from || null,
       preferred_time_to: preferred_time_to || null,
       full_address: full_address || null,
-      latitude: latitude ?? null,
-      longitude: longitude ?? null,
-      city: city !== undefined ? city : creator.city,
-      area: area !== undefined ? area : creator.area,
+      latitude: location.latitude ?? null,
+      longitude: location.longitude ?? null,
+      city: location.city ?? null,
+      area: location.area ?? null,
+      pincode: location.pincode ?? null,
       created_by: userId,
       workers_required: workers_required || 1,
       urgent: !!urgent,
@@ -84,8 +136,8 @@ class JobService {
 
     const nearbyUsers = await User.findAll({
       where: {
-        city: creator.city,
-        area: creator.area,
+        city: job.city,
+        area: job.area,
         id: { [Op.ne]: userId },
       },
       attributes: ['id'],

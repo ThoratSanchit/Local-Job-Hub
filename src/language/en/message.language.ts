@@ -55,6 +55,8 @@ class Messages {
   static readonly JOB_COMPLETE_INVALID_STATE = 'Job must be FULL or PARTIALLY_ACCEPTED to complete';
   static readonly EXPIRES_AT_MUST_BE_FUTURE = 'expires_at must be in the future';
   static readonly CANNOT_RESPOND_OWN_JOB = 'You cannot respond to your own job';
+  static readonly JOB_LOCATION_FIELDS_REQUIRED = 'City, area and pincode are required for job location';
+  static readonly INVALID_JOB_LOCATION_PAYLOAD = 'Send either latitude and longitude, or city, area and pincode for job location';
 
   // Job Response
   static readonly RESPONSE_SUBMITTED = 'Response submitted successfully';

@@ -143,6 +143,37 @@ class LocationService {
       longitude,
     };
   }
+
+  async geocodeJobLocation(city: string, area: string, pincode: string, fullAddress?: string | null): Promise<NormalizedLocation> {
+    const normalizedCity = city.trim();
+    const normalizedArea = area.trim();
+    const normalizedPincode = pincode.trim();
+    const normalizedFullAddress = fullAddress?.trim();
+
+    if (!normalizedCity || !normalizedArea || !normalizedPincode) {
+      throw new CustomError(400, Messages.JOB_LOCATION_FIELDS_REQUIRED);
+    }
+
+    const results = await this.fetchLocationIq<LocationIqResult[]>('search', {
+      q: [normalizedFullAddress, normalizedArea, normalizedCity, normalizedPincode].filter(Boolean).join(', '),
+      limit: '1',
+    });
+    const result = results[0];
+    const latitude = Number(result?.lat);
+    const longitude = Number(result?.lon);
+
+    if (!result || !this.isValidCoordinate(latitude, longitude)) {
+      throw new CustomError(404, Messages.LOCATION_NOT_FOUND);
+    }
+
+    return {
+      city: normalizedCity,
+      area: normalizedArea,
+      pincode: normalizedPincode,
+      latitude,
+      longitude,
+    };
+  }
 }
 
 export default new LocationService();
