@@ -3,7 +3,7 @@ import Messages from '../language/en/message.language';
 import { AvailabilityStatus } from '../enums/availability.status.enum';
 import CustomError from '../utility/customError.utility';
 import UserService from '../services/user.service';
-import { IUpdateUser, IUserParams } from '../interfaces/user.interface';
+import { IUpdateUser, IUpdateUserLocation, IUserParams } from '../interfaces/user.interface';
 
 class UserController {
   async getMe(req: FastifyRequest, reply: FastifyReply) {
@@ -101,6 +101,35 @@ class UserController {
         statusCode: 200,
         message: Messages.AVAILABILITY_UPDATED,
         availability_status
+      });
+    } catch (err) {
+      if (err instanceof CustomError) {
+        return reply.code(err.statusCode).send({
+          statusCode: err.statusCode,
+          message: err.message
+        });
+      }
+
+      req.log.error(err);
+      return reply.code(500).send({
+        statusCode: 500,
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
+    }
+  }
+
+  async updateLocation(
+    req: FastifyRequest<{ Body: IUpdateUserLocation }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const userId = (req as any).user.id;
+      const user = await UserService.updateLocation(userId, req.body);
+
+      return reply.code(200).send({
+        statusCode: 200,
+        message: Messages.LOCATION_UPDATED_SUCCESSFULLY,
+        data: user,
       });
     } catch (err) {
       if (err instanceof CustomError) {

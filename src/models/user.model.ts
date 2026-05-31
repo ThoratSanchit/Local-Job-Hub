@@ -12,6 +12,8 @@ class User extends Model {
   public city!: string | null;
   public area!: string | null;
   public pincode!: string | null;
+  public latitude!: number | null;
+  public longitude!: number | null;
   public profile_photo!: string | null;
   public about_me!: string | null;
   public skills!: string[] | null;
@@ -58,6 +60,14 @@ User.init(
     },
     pincode: {
       type: DataTypes.STRING,
+      allowNull: true
+    },
+    latitude: {
+      type: DataTypes.FLOAT,
+      allowNull: true
+    },
+    longitude: {
+      type: DataTypes.FLOAT,
       allowNull: true
     },
     profile_photo: {

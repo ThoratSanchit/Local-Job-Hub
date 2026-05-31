@@ -29,6 +29,13 @@ class Messages {
   static readonly AVAILABILITY_UPDATED = 'Availability status updated';
   static readonly INVALID_AVAILABILITY_STATUS = 'Invalid availability_status';
   static readonly INVALID_SKILLS = 'Skills must be an array of strings';
+  static readonly LOCATION_UPDATED_SUCCESSFULLY = 'Location updated successfully';
+  static readonly LOCATIONIQ_API_KEY_MISSING = 'LocationIQ API key is not configured';
+  static readonly LOCATION_LOOKUP_FAILED = 'Unable to fetch location details';
+  static readonly LOCATION_NOT_FOUND = 'Location not found';
+  static readonly INVALID_COORDINATES = 'Latitude and longitude must be valid coordinates';
+  static readonly LOCATION_FIELDS_REQUIRED = 'City, area and pincode are required';
+  static readonly INVALID_LOCATION_PAYLOAD = 'Send either latitude and longitude, or city, area and pincode';
 
   // Job
   static readonly JOB_CREATED = 'Job created successfully';

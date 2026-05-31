@@ -8,6 +8,8 @@ export interface ISignupRequest {
   city?: string | null;
   area?: string | null;
   pincode?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   profile_photo?: string;
   about_me?: string | null;
   skills?: string[] | null;
@@ -33,6 +35,8 @@ export interface IAuthResult {
     city: string | null;
     area: string | null;
     pincode: string | null;
+    latitude: number | null;
+    longitude: number | null;
     profile_photo: string | null;
     about_me: string | null;
     skills: string[] | null;

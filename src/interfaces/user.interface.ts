@@ -10,6 +10,8 @@ export interface IUser {
   city: string | null;
   area: string | null;
   pincode: string | null;
+  latitude: number | null;
+  longitude: number | null;
   profile_photo: string | null;
   about_me: string | null;
   skills: string[] | null;
@@ -29,6 +31,8 @@ export interface ICreateUser {
   city?: string | null;
   area?: string | null;
   pincode?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   profile_photo?: string | null;
   about_me?: string | null;
   skills?: string[] | null;
@@ -43,6 +47,8 @@ export interface IUpdateUser {
   city?: string | null;
   area?: string | null;
   pincode?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   profile_photo?: string | null;
   about_me?: string | null;
   skills?: string[] | null;
@@ -56,4 +62,12 @@ export interface IUpdateUser {
 
 export interface IUserParams {
   id: string;
+}
+
+export interface IUpdateUserLocation {
+  latitude?: number;
+  longitude?: number;
+  city?: string;
+  area?: string;
+  pincode?: string;
 }
