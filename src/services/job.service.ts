@@ -22,7 +22,7 @@ import { sequelize } from '../config/instance';
 import LocationService from './location.service';
 
 class JobService {
-  private async resolveJobLocation(data: ICreateJobRequest, creator: User) {
+  private async resolveJobLocation(data: ICreateJobRequest | IUpdateJobRequest, creator?: User) {
     const hasAnyCoordinate = data.latitude !== undefined && data.latitude !== null
       || data.longitude !== undefined && data.longitude !== null;
     const hasCoordinatePair = data.latitude !== undefined && data.latitude !== null
@@ -65,6 +65,10 @@ class JobService {
       return LocationService.geocodeJobLocation(city, area, pincode, data.full_address);
     }
 
+    if (!creator) {
+      return null;
+    }
+
     return {
       city: creator.city,
       area: creator.area,
@@ -105,6 +109,9 @@ class JobService {
     }
 
     const location = await this.resolveJobLocation(data, creator);
+    if (!location) {
+      throw new CustomError(400, Messages.INVALID_JOB_LOCATION_PAYLOAD);
+    }
 
     const job = await JobRepository.create({
       title,
@@ -262,6 +269,7 @@ class JobService {
 
     const { expires_at, ...jobFields } = data;
     const updateData: IUpdateJobData = { ...jobFields };
+    const location = await this.resolveJobLocation(data);
 
     if (expires_at !== undefined) {
       if (expires_at !== null && new Date(expires_at) <= new Date()) {
@@ -270,6 +278,15 @@ class JobService {
 
       updateData.expires_at = expires_at ? new Date(expires_at) : null;
     }
+
+    if (location) {
+      updateData.city = location.city;
+      updateData.area = location.area;
+      updateData.pincode = location.pincode;
+      updateData.latitude = location.latitude;
+      updateData.longitude = location.longitude;
+    }
+
     await JobRepository.updateJob(jobId, updateData);
 
     return this.getJobById(jobId);

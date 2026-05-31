@@ -3,7 +3,7 @@ import { AvailabilityStatus } from '../enums/availability.status.enum';
 import { IUpdateUser, IUpdateUserLocation } from '../interfaces/user.interface';
 import Messages from '../language/en/message.language';
 import CustomError from '../utility/customError.utility';
-import LocationService from './location.service';
+import LocationService, { NormalizedLocation } from './location.service';
 
 class UserService {
   private validateSkills(skills: IUpdateUser['skills']) {
@@ -14,6 +14,43 @@ class UserService {
     ) {
       throw new CustomError(400, Messages.INVALID_SKILLS);
     }
+  }
+
+  private async resolveUserLocation(data: IUpdateUser | IUpdateUserLocation): Promise<NormalizedLocation | null> {
+    const hasAnyCoordinate = data.latitude !== undefined && data.latitude !== null
+      || data.longitude !== undefined && data.longitude !== null;
+    const hasCoordinatePair = data.latitude !== undefined && data.latitude !== null
+      && data.longitude !== undefined && data.longitude !== null;
+    const hasAnyManualAddress = data.city !== undefined && data.city !== null
+      || data.area !== undefined && data.area !== null
+      || data.pincode !== undefined && data.pincode !== null;
+    const hasManualAddress =
+      typeof data.city === 'string' &&
+      typeof data.area === 'string' &&
+      typeof data.pincode === 'string';
+
+    if (hasAnyCoordinate && hasAnyManualAddress) {
+      throw new CustomError(400, Messages.INVALID_LOCATION_PAYLOAD);
+    }
+
+    if (hasAnyCoordinate) {
+      if (!hasCoordinatePair) {
+        throw new CustomError(400, Messages.INVALID_LOCATION_PAYLOAD);
+      }
+
+      return LocationService.reverseGeocode(Number(data.latitude), Number(data.longitude));
+    }
+
+    if (hasAnyManualAddress) {
+      if (!hasManualAddress) {
+        throw new CustomError(400, Messages.LOCATION_FIELDS_REQUIRED);
+      }
+
+      const { city, area, pincode } = data as { city: string; area: string; pincode: string };
+      return LocationService.geocode(city, area, pincode);
+    }
+
+    return null;
   }
 
   async getMe(userId: string) {
@@ -39,45 +76,23 @@ class UserService {
   async updateProfile(userId: string, data: IUpdateUser) {
     this.validateSkills(data.skills);
 
-    await UserRepository.updateProfile(userId, data);
+    const location = await this.resolveUserLocation(data);
+    await UserRepository.updateProfile(userId, {
+      ...data,
+      ...(location ?? {}),
+    });
     return this.getMe(userId);
   }
 
   async updateLocation(userId: string, data: IUpdateUserLocation) {
-    const hasAnyCoordinate = data.latitude !== undefined || data.longitude !== undefined;
-    const hasCoordinatePair = data.latitude !== undefined && data.longitude !== undefined;
-    const hasAnyManualAddress = data.city !== undefined || data.area !== undefined || data.pincode !== undefined;
-    const hasManualAddress =
-      typeof data.city === 'string' &&
-      typeof data.area === 'string' &&
-      typeof data.pincode === 'string';
+    const location = await this.resolveUserLocation(data);
 
-    if (hasAnyCoordinate && hasAnyManualAddress) {
+    if (!location) {
       throw new CustomError(400, Messages.INVALID_LOCATION_PAYLOAD);
     }
 
-    if (hasAnyCoordinate) {
-      if (!hasCoordinatePair) {
-        throw new CustomError(400, Messages.INVALID_LOCATION_PAYLOAD);
-      }
-
-      const location = await LocationService.reverseGeocode(Number(data.latitude), Number(data.longitude));
-      await UserRepository.updateProfile(userId, location);
-      return this.getMe(userId);
-    }
-
-    if (hasAnyManualAddress) {
-      if (!hasManualAddress) {
-        throw new CustomError(400, Messages.LOCATION_FIELDS_REQUIRED);
-      }
-
-      const { city, area, pincode } = data as Required<Pick<IUpdateUserLocation, 'city' | 'area' | 'pincode'>>;
-      const location = await LocationService.geocode(city, area, pincode);
-      await UserRepository.updateProfile(userId, location);
-      return this.getMe(userId);
-    }
-
-    throw new CustomError(400, Messages.INVALID_LOCATION_PAYLOAD);
+    await UserRepository.updateProfile(userId, location);
+    return this.getMe(userId);
   }
 
   async toggleAvailability(userId: string, availability_status: AvailabilityStatus) {
